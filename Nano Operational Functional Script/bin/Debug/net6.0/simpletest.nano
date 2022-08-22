@@ -1,0 +1,16 @@
+let name "moritz"
+let age 12
+cll print "hello " name " as user " age
+let arr 13 14 15
+get 1 arr
+set age
+
+tbl User
+  let uName "heinz"
+  let uAge 12
+  let uId 12903
+  fnc someFunction name age id
+    cll print "the user" name " is " age " years old and has the id " id
+    set uAge 13
+  ret
+ext

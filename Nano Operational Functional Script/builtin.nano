@@ -1,0 +1,4 @@
+#Builtin
+fnc print text
+
+ret

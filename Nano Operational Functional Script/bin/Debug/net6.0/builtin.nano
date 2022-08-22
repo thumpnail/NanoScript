@@ -1,0 +1,33 @@
+#Builtin
+fnc add a b
+ret a + b
+
+fnc sub a b
+ret a - b
+
+fnc mul a b
+ret a MUL b
+
+fnc div a b
+ret a / b
+
+fnc increment a
+ret a++
+
+fnc print a
+ret
+
+fnc overloadtype a ? i16 b ? i8
+ret
+
+fnc overloadtype a b c
+ret
+
+#parameter a, b, c, [d='c',somename=12]
+fnc defpara a b c d 'c' somename 12
+ret
+
+-#
+block comment
+yes yes
+#-

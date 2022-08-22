@@ -1,0 +1,140 @@
+case "NULL":
+    token = TokenType.t_nil;
+    break;
+case "\'":
+    token = TokenType.t_char;
+    if (words[i + 2] != "\'") {
+        token = TokenType.t_charArray;
+    }
+    insideChar = !insideChar;
+    break;
+case "\"":
+    token = TokenType.t_string;
+    insideStr = !insideStr;
+    break;
+case "[":
+    token = TokenType.s_bracketOpen;
+    if (words[i - 1] == "=") {
+        stack.Push("inArray");
+        token = TokenType.t_array;
+    } else {
+        stack.Push("inBrackets");
+    }
+    break;
+case "]":
+token = TokenType.s_bracketClose;
+stack.Pop();
+break;
+case "iff":
+token = TokenType.k_iff;
+break;
+case "nif":
+token = TokenType.k_nif;
+break;
+case "elf":
+token = TokenType.k_elf;
+break;
+case "els":
+token = TokenType.k_els;
+break;
+case "let":
+token = TokenType.k_let;
+break;
+case "fnc":
+token = TokenType.k_fnc;
+break;
+case "whl":
+token = TokenType.k_whl;
+break;
+case "ret":
+token = TokenType.k_ret;
+break;
+case "&":
+token = TokenType.l_AND;
+break;
+case "|":
+token = TokenType.l_OR;
+break;
+case "?":
+token = TokenType.o_questionmark;
+break;
+case "<":
+token = TokenType.o_left;
+if (words[i + 1] == "<") {
+token = TokenType.o_doubleLeft;
+str = "<<";
+i++;
+}
+break;
+case ">":
+token = TokenType.o_right;
+if (words[i + 1] == ">") {
+token = TokenType.o_doubleRight;
+str = ">>";
+i++;
+}
+break;
+/*case "!":
+token = TokenType.l_not;
+if (words[i + 1] == "=") {
+token = TokenType.l_not_equals;
+str = "!=";
+i++;
+}
+break;*/
+case "+":
+token = TokenType.o_plus;
+if (words[i + 1] == "+") {
+token = TokenType.o_doubleplus;
+str = "++";
+i++;
+}
+break;
+case "*":
+token = TokenType.o_multiply;
+break;
+case "/":
+token = TokenType.o_divide;
+break;
+case "-":
+token = TokenType.o_minus;
+if (words[i + 1] == "-") {
+token = TokenType.o_doubleminus;
+str = "--";
+i++;
+}
+break;
+case ":":
+token = TokenType.o_colon;
+if (words[i + 1] == ":") {
+token = TokenType.o_doubleColon;
+str = "::";
+i++;
+}
+break;
+case ".":
+token = TokenType.o_dot;
+break;
+case ",":
+token = TokenType.o_comma;
+break;
+case "#":
+token = TokenType.o_comment;
+break;
+default:
+try {
+if (words[i - 1] == "let") {
+token = TokenType.k_identifier;
+} else {
+token = TokenType.k_refference;
+}
+} catch (Exception) {
+token = TokenType.k_refference;
+}
+if (insideStr) {
+token = TokenType.t_string;
+}
+if (insideChar) {
+token = TokenType.t_char;
+}
+break;
