@@ -83,6 +83,7 @@ public class Lexer {
             }
         }
         words.Add("EOF");
+#if DEBUG
         foreach (var item in words) {
             Console.Write(item);
 
@@ -91,6 +92,7 @@ public class Lexer {
             Console.ForegroundColor = ConsoleColor.Gray;            
         }
         Console.WriteLine();
+#endif
         return words;
     }
     private static bool ArrayContains(char c, char[] arr) {
@@ -113,7 +115,7 @@ public class Lexer {
         ["set"] = TokenType.k_set,
         ["err"] = TokenType.k_err,
         ["fnc"] = TokenType.k_fnc,
-        ["sct"] = TokenType.k_sct,
+        ["tbl"] = TokenType.k_tbl,
         ["pck"] = TokenType.k_pck,
         ["let"] = TokenType.k_let,
         ["var"] = TokenType.k_var,
@@ -193,7 +195,7 @@ public class Lexer {
                     case "set": token = TokenType.k_set; break;
                     case "err": token = TokenType.k_err; break;
                     case "fnc": token = TokenType.k_fnc; break;
-                    case "sct": token = TokenType.k_sct; break;
+                    case "tbl": token = TokenType.k_tbl; break;
                     case "pck": token = TokenType.k_pck; break;
                     case "let": token = TokenType.k_let; break;
                     case "cst": token = TokenType.k_cst; break;

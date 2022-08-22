@@ -22,6 +22,10 @@
                 scope[cScope].Add(name, nanoValue);
             }
             
+            public static void CloneValue(string name) { 
+                throw new NotImplementedException(); 
+            }
+
             public static void ClearScope() {
                 if (scope.Count == 1) return;
                 scope.RemoveAt(scope.Count-1);
@@ -49,14 +53,11 @@
                 foreach (var item in scope) {
                     if (item.ContainsKey(name)) {
                         return item[name];
-                        Console.WriteLine("found");
                     }
                 }
                 throw new Exception("The value you are looking for does not exist...");
             }
 
-            //TODO find value and return inside type -> cll print name
-            //                                                   |----| Get the underlying name
             public static object ResolveRef(string name) {
                 //TODO get String
                 //TODO get Int
@@ -66,10 +67,11 @@
                 
                 return value.GetValue();
             }
+            
             public static object? ResolveFnc(string name, object[] @params) {
                 return null;
             }
-            //Removes '"' from a provided Tokenlist
+            //Removes '"' from a provided Tokenlist | Function Specific
             public static Tuple<List<TokenType>, List<string>> ResolveParameterMap(string[] @params, TokenType[] paraTokens) {
                 //RefferenceMap
                 var list = new List<Tuple<TokenType, string>>();
@@ -80,7 +82,18 @@
                 //remove " and func name
                 list.RemoveAll(x => x.Item2.Equals("\""));
                 list.RemoveAll(x => x.Item2.Equals("\'"));
-                list.RemoveAt(0);
+
+                //TODO remove all seperate parts and insert Path from PathResolver
+                var path = BuiltIn.PathResolver(@params);
+                var path_tk = list[0].Item1;
+                for (int i = 0; i < path.Item2; i++) {
+                    list.RemoveAt(0);
+                }
+                //if (path_tk == TokenType.k_identifier) {
+                //    list.Insert(0, new(TokenType.k_identifier, path.Item1));//TODO Fix forced refference
+                //} else {
+                //    list.Insert(0, new(TokenType.k_refference, path.Item1));//TODO Fix forced refference
+                //}
 
                 //Editables
                 var tokenList = new List<TokenType>();
@@ -90,10 +103,18 @@
                     tokenList.Add(item.Item1);
                     paraList.Add(item.Item2);
                 }
+                //resolve refference
+                for (int i = 0; i < paraList.Count; i++) {
+                    if (tokenList[i].Equals(TokenType.k_refference)) {
+                        paraList[i] = Context.Scope.ResolveRef(paraList[i]).ToString() is null ? "null" : Context.Scope.ResolveRef(paraList[i]).ToString();
+                        tokenList[i] = Context.GuessType(paraList[i]);
+                    }
+                }
                 return new(tokenList, paraList);
             }
 
             public static void printScope() {
+#if DEBUG
                 BetterConsoleTables. Table t = new("Idx", "Name", "Type", "Value");
                 t.Config = BetterConsoleTables.TableConfiguration.Unicode();
                 int idx = 0;
@@ -103,6 +124,28 @@
                     }
                 }
                 Console.WriteLine(t.ToString());
+#endif
+            }
+        }
+        public static TokenType GuessType(object value) {
+            if (value is int) {
+                return TokenType.t_int;
+            } else if (value is float) {
+                return TokenType.t_float;
+            } else if (value is bool) {
+                return TokenType.t_bool;
+            } else if (value is char) {
+                return TokenType.t_char;
+            } else if (value is string) {
+                return TokenType.t_string;
+            } else if (value is NanoValue) {
+                return GuessType(((NanoValue)value).GetValue);
+            } else if (value is NanoArray) {
+                return TokenType.t_array;
+            } else if (value is null) {
+                return TokenType.t_nil;
+            } else {
+                return TokenType.Unkown;
             }
         }
     }
@@ -121,13 +164,14 @@
         [TokenType.k_set] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.k_err] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.k_fnc] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.k_sct] = (TokenType[] paraTokens, string[] @params) => { },
+        [TokenType.k_tbl] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.k_pck] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.k_let] = (TokenType[] paraTokens, string[] @params) => {
-            bool isArr = @params.Length > 2 && !@params[1].Equals("\"");
             var letname = @params[0];
-
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
+            bool isArr = list.Item2.Count > 2;
+
+
             NanoType value;
             if (isArr) {
                 //TODO Implement Array
@@ -176,15 +220,14 @@
         [TokenType.k_cst] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.f_cll] = (TokenType[] paraTokens, string[] @params) => {
             //TODO: Resolve Refferences
-            var funcname = @params[0];
+            var path = BuiltIn.PathResolver(@params);
+            var funcname = path.Item1;
+
+            for (int i = 0; i < path.Item2; i++) {
+                paraTokens[i] = TokenType.k_identifier;
+            }
 
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
-
-            for (int i = 0; i < list.Item2.Count; i++) {
-                if (list.Item1[i].Equals(TokenType.k_refference)) {
-                    list.Item2[i] = Context.Scope.ResolveRef(list.Item2[i]).ToString() is null ? "null" : Context.Scope.ResolveRef(list.Item2[i]).ToString();
-                }
-            }
 
             //var varible = Context.Scope.ResolveRef(@params[2]);
             BuiltIn.builtInFunctions[funcname](list.Item2.ToArray());

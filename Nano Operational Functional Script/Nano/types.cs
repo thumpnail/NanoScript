@@ -45,6 +45,10 @@ public struct NanoValue : NanoType {
     public override string? ToString() {
         return Value is null ? "null" : Value.ToString();
     }
+
+    //public static NanoValue operator +(NanoValue val1, NanoValue val2) {
+    //    new NanoValue(val1.Value + val2.valu)
+    //}
 }
 
 public struct NanoArray : NanoType {

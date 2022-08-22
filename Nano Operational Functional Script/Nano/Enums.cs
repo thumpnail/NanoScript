@@ -29,7 +29,7 @@
     k_err,
 
     k_fnc,
-    k_sct,
+    k_tbl,
     k_pck,
 
     k_let,

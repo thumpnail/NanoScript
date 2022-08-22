@@ -1,7 +1,12 @@
 ﻿using BetterConsoleTables;
+
 public class Program {
-    public static void Main() {
-        StreamReader sr = new StreamReader("simpletest.nano");
+    public static void Main(string[] args) {
+#if DEBUG
+        StreamReader sr = new StreamReader(@".\simpletest.nano");
+#elif RELEASE
+        StreamReader sr = new StreamReader(args[0].ToString());
+#endif
         List<string> scriptLines = new List<string>();
         string line = "";
         while ((line = sr.ReadLine()) is not null) {
@@ -13,6 +18,7 @@ public class Program {
         List<string> words = Lexer.preprocessor(scriptLines.ToArray());
         List<Tuple<TokenType, string>> tokens = Lexer.LexIt(words);
 
+#if DEBUG
         {
             Table t = new("Idx", "Token", "Value");
             t.Config = TableConfiguration.Unicode();
@@ -25,6 +31,7 @@ public class Program {
             }
             Console.WriteLine(t.ToString());
         }
+#endif
         Interpreter interpreter = new();
         interpreter.Execute(tokens);
         Interpreter.Context.Scope.printScope();

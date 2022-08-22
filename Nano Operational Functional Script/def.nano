@@ -34,14 +34,16 @@ cpy <varname> <varname>
 err <errcode>
 err <errcode> <message>
 
+get <number|string> <arrname|tablename>
+
 set <varname>
 #is set needed
 set <varname> <varname/value/...>
 set <varname> < <filename>
-set <varname> <<number> <filename>
+set <varname> < <number> <filename>
 set <varname> > <filename>
 set <varname> << <filename>
-set <varname> <<<number> <filename>
+set <varname> << <number> <filename>
 set <varname> >> <filename>
 set <varname> << <configfilename_ini_cfg_json_xml>
 
@@ -93,10 +95,10 @@ for <varname> <varname>
 ext
 
 #struct
-sct <structname>
+tbl <structname>
   <expressions/statements>
 ext
-sct <structname> <parametername> <...>
+tbl <structname> <parametername> <...>
   <expressions/statements>
 ext
 
