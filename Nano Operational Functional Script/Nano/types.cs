@@ -6,6 +6,7 @@
     object? GetValue();
     void SetValue(object value);
     string ToString();
+    object FixType(object value);
 }
 public struct NanoValue : NanoType {
     public int id { get; set; }
@@ -19,6 +20,7 @@ public struct NanoValue : NanoType {
         this.type = Type;
         this.Value = Value;
         this.isEditable = isEditable;
+        this.Value = FixType(Value);
     }
 
     public object? GetValue() {
@@ -39,11 +41,29 @@ public struct NanoValue : NanoType {
         }
     }
     public void SetValue(object value) {
-        if (isEditable) this.Value = value;
+        if (isEditable) this.Value = FixType(value);
         else throw new Exception("NanoValue is not Editable");
     }
     public override string? ToString() {
         return Value is null ? "null" : Value.ToString();
+    }
+
+    public object FixType(object value) {
+        int i;
+        float f;
+        bool b;
+        if (int.TryParse(value.ToString(), out i)) {
+            type = Interpreter.Context.GuessType(i);
+            return i;
+        } else if (float.TryParse(value.ToString(), out f)) {
+            type = Interpreter.Context.GuessType(f);
+            return f;
+        } else if (bool.TryParse(value.ToString(), out b)) {
+            type = Interpreter.Context.GuessType(b);
+            return b;
+        }
+        return value;
+        throw new NotImplementedException();
     }
 
     //public static NanoValue operator +(NanoValue val1, NanoValue val2) {
@@ -81,6 +101,10 @@ public struct NanoArray : NanoType {
         }
         final += "]";
         return final;
+    }
+
+    public object FixType(object value) {
+        throw new NotImplementedException();
     }
 }
 

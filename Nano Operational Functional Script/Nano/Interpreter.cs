@@ -40,6 +40,9 @@
             public static void CreateGlobal() {
 
             }
+            public static void SetValue() {
+
+            }
             public static bool ValueExist(string valueName) {
                 foreach (var subscope in scope) {
                     if (subscope.ContainsKey(valueName)) {
@@ -115,7 +118,7 @@
                 int idx = 0;
                 foreach (var item1 in scope) {
                     foreach (var item2 in item1) {
-                        t.AddRow(idx++, item2.Key, item2.Value.GetType(), item2.Value.ToString());
+                        t.AddRow(idx++, item2.Key, item2.Value.GetType()+":"+ item2.Value.type, item2.Value.ToString());
                     }
                 }
                 Console.WriteLine(t.ToString());
