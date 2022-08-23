@@ -5,3 +5,4 @@
  Performance it not a priority of this language at the moment.
 
  Language Definition is contained in [def.nano](./Nano/def.nano)
+ Some fancy imaginary shit is contained in [test.nano](./Nano/Test.nano)
