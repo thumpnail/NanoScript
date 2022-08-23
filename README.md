@@ -4,4 +4,4 @@
  My goal ist to create a language which you can mostly write without using any Specials(+,-,*,/,[,],{,},...) so it is easier to write.
  Performance it not a priority of this language at the moment.
 
- Language Definition is contained in [def.nano](./NanoScript/Nano/def.nano)
+ Language Definition is contained in [def.nano](./Nano/def.nano)
