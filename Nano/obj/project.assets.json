@@ -79,11 +79,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\fried\\OneDrive\\Dokumente\\Code\\Visual Studio Projects\\Nano Operational Functional Script\\Nano Operational Functional Script\\NanoScript.csproj",
+      "projectUniqueName": "C:\\Users\\fried\\OneDrive\\Dokumente\\Code\\Visual Studio Projects\\Nano Operational Functional Script\\Nano\\NanoScript.csproj",
       "projectName": "NanoScript",
-      "projectPath": "C:\\Users\\fried\\OneDrive\\Dokumente\\Code\\Visual Studio Projects\\Nano Operational Functional Script\\Nano Operational Functional Script\\NanoScript.csproj",
+      "projectPath": "C:\\Users\\fried\\OneDrive\\Dokumente\\Code\\Visual Studio Projects\\Nano Operational Functional Script\\Nano\\NanoScript.csproj",
       "packagesPath": "C:\\Users\\fried\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\fried\\OneDrive\\Dokumente\\Code\\Visual Studio Projects\\Nano Operational Functional Script\\Nano Operational Functional Script\\obj\\",
+      "outputPath": "C:\\Users\\fried\\OneDrive\\Dokumente\\Code\\Visual Studio Projects\\Nano Operational Functional Script\\Nano\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
