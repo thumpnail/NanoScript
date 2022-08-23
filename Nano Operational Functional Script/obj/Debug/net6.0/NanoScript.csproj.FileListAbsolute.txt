@@ -15,3 +15,4 @@ C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational F
 C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano Operational Functional Script\obj\Debug\net6.0\NanoScript.pdb
 C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano Operational Functional Script\obj\Debug\net6.0\NanoScript.genruntimeconfig.cache
 C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano Operational Functional Script\obj\Debug\net6.0\ref\NanoScript.dll
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano Operational Functional Script\bin\Debug\net6.0\Newtonsoft.Json.dll

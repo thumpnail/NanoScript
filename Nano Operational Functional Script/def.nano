@@ -66,7 +66,6 @@ inc <nanoscriptfile/nanoscriptfilepath> <varname>
 
 #array
 let arr2d arr arr2 #2d array
-let arr3d ? [][][] #array define
 
 #destruct
 ~<varname>

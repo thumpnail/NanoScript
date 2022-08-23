@@ -73,7 +73,6 @@ public struct NanoArray : NanoType {
     public void SetValue() { }
 
     public void SetValue(object value) {
-        throw new NotImplementedException();
     }
     public override string? ToString() {
         string final = "[";

@@ -59,12 +59,7 @@
             }
 
             public static object ResolveRef(string name) {
-                //TODO get String
-                //TODO get Int
-                //TODO get Float
-                //TODO usw
                 var value = ScopeLookup(name);
-                
                 return value.GetValue();
             }
             
@@ -83,7 +78,7 @@
                 list.RemoveAll(x => x.Item2.Equals("\""));
                 list.RemoveAll(x => x.Item2.Equals("\'"));
 
-                //TODO remove all seperate parts and insert Path from PathResolver
+                //remove all seperate parts and insert Path from PathResolver
                 var path = BuiltIn.PathResolver(@params);
                 var path_tk = list[0].Item1;
                 for (int i = 0; i < path.Item2; i++) {
@@ -148,6 +143,62 @@
                 return TokenType.Unkown;
             }
         }
+        //["-13","+","24","*","3.4"]
+        public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list) {
+            int i = 0, pass = 0;
+            List<string> raw = list.Item2;
+            Console.WriteLine(Helper.DUMP(raw));
+            while (raw.Count > 1) {
+                if (i+1 == raw.Count) { i = 0; pass++; }
+                if (raw[i + 1] == "(" && pass == 0) {
+
+                } else if (raw[i + 1] == ")" && pass == 0) {
+                    
+                } else if (raw[i + 1] == "*" && pass == 1) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) * int.Parse(raw[i + 2])).ToString();
+                    } catch (Exception) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) * float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    Console.WriteLine(Helper.DUMP(raw));
+                    i = 0;
+                } else if (raw[i + 1] == "/" && pass == 1) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) / int.Parse(raw[i + 2])).ToString();
+                    } catch (Exception) {
+                        raw[i] = (float.Parse(raw[i].Replace('.',',')) / float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    Console.WriteLine(Helper.DUMP(raw));
+                    i = 0;
+                } else if (raw[i + 1] == "+" && pass == 2) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) + int.Parse(raw[i + 2])).ToString();
+                    } catch (Exception) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) + float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    Console.WriteLine(Helper.DUMP(raw));
+                    i = 0;
+                } else if (raw[i + 1] == "-" && pass == 2) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) - int.Parse(raw[i + 2])).ToString();
+                    } catch (Exception) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) - float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    Console.WriteLine(Helper.DUMP(raw));
+                    i = 0;
+                }
+                i++;
+            }
+            return new NanoValue((object)raw[0], GuessType((object)raw[0]));
+        }
     }
     private Dictionary<TokenType, Action<TokenType[], string[]>> executeMap = new Dictionary<TokenType, Action<TokenType[], string[]>> {
         [TokenType.k_iff] = (TokenType[] paraTokens, string[] @params) => { },
@@ -170,10 +221,11 @@
             var letname = @params[0];
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
             bool isArr = list.Item2.Count > 2;
+            bool isCalc = isArr && (Lexer.StringContains(list.Item2[1], "+-*/()".ToArray()) || Lexer.StringContains(list.Item2[0], "+-*/()".ToArray()));
 
 
             NanoType value;
-            if (isArr) {
+            if (isArr && !isCalc) {
                 //TODO Implement Array
                 List<NanoValue> nanoValues = new List<NanoValue>();
                 for (int i = 0; i < list.Item2.Count; i++) {
@@ -211,6 +263,9 @@
                     }
                 }
                 value = new NanoArray(nanoValues.ToArray());
+            } else if (isCalc && isArr) {
+                //TODO solve Calculation
+                value = Context.Evaluate(list);
             } else {
                 value = new NanoValue(list.Item2[0], list.Item1[0]);
             }
@@ -240,6 +295,7 @@
             
         },
         [TokenType.o_colon] = (TokenType[] paraTokens, string[] @params) => { },
+        [TokenType.o_tilde] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.EOL] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.EOF] = (TokenType[] paraTokens, string[] @params) => { },
     };

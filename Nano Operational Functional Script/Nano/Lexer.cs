@@ -18,13 +18,17 @@ public class Lexer {
     };
 
     public static List<string> preprocessor(string[] scriptLines) {
-        bool isComment = false, isString = false, isChar = false;
+        bool isComment = false, isString = false, isChar = false, isNumber = false;
         List<string> words = new();
         string word = "";
 
         foreach (var line in scriptLines) {
             word = "";
-            foreach (var c in line) {
+            for (int i = 0; i < line.Length; i++) {
+                
+                char c = line[i], next = ' ';
+                if (i+1 < line.Length) next = line[i + 1];
+
                 //string and chars
                 if (isString || isChar) {
                     if (c != '\"') {
@@ -36,7 +40,11 @@ public class Lexer {
                     isComment = true;
                     continue;
                 }
-                
+
+                if ((c == '-' && ArrayContains(next, "1234567890.".ToArray()) || ArrayContains(c, "1234567890.".ToArray()))) {
+                    word += c;
+                    continue;
+                }
 
                 if (c == ' ') {
                     //whitespace
@@ -51,10 +59,6 @@ public class Lexer {
                     word += c;
                 }
 
-                if (ArrayContains(c, "1234567890".ToArray())) {
-                    //number(float,int)
-                    word += c;
-                }
                 if (ArrayContains(c, symbols)) {
                     //other symbols
                     if (c == '\"') {
@@ -153,7 +157,8 @@ public class Lexer {
             TokenType token = TokenType.Unkown;
             string str = words[i];
 
-            if (StringContains(words[i], "-1234567890".ToArray())) {
+            //is digit
+            if (StringContains(words[i], "-1234567890.".ToArray())) {
                 token = TokenType.t_int;
             } else if (StringContains(words[i], "-1234567890.".ToArray())) {
                 token = TokenType.t_float;
@@ -322,15 +327,12 @@ public class Lexer {
                 remlist.Add(item);
             }
         }
-        foreach (var item in remlist) {
-            final.Remove(item);
-        }
         return final;
     }
     public static List<Tuple<TokenType, string>>? LexItV2(List<string> words) {
         return null;
     }
-    private static bool StringContains(string src, char[] arr) {
+    public static bool StringContains(string src, char[] arr) {
         int check = 0;
         foreach (var c in arr) {
             if (src.Contains(c)) {
@@ -339,6 +341,13 @@ public class Lexer {
         }
         return check == src.Length;
     }
-    
-
+    public static bool StringEquals(string src, char[] arr) {
+        int check = 0;
+        foreach (var c in arr) {
+            if (src.Equals(c)) {
+                check++;
+            }
+        }
+        return check == src.Length;
+    }
 }
