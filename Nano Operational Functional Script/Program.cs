@@ -2,6 +2,7 @@
 
 public class Program {
     public static void Main(string[] args) {
+        if (args.Count() == 0) return;
 #if DEBUG
         StreamReader sr = new StreamReader(@".\simpletest.nano");
 #elif RELEASE

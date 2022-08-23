@@ -150,7 +150,6 @@
         public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list) {
             int i = 0, pass = 0;
             List<string> raw = list.Item2;
-            Console.WriteLine(Helper.DUMP(raw));
             while (raw.Count > 1) {
                 if (i+1 == raw.Count) { i = 0; pass++; }
                 if (raw[i + 1] == "(" && pass == 0) {
@@ -165,7 +164,6 @@
                     }
                     raw.RemoveAt(i + 2);
                     raw.RemoveAt(i + 1);
-                    Console.WriteLine(Helper.DUMP(raw));
                     i = 0;
                 } else if (raw[i + 1] == "/" && pass == 1) {
                     try {
@@ -175,7 +173,6 @@
                     }
                     raw.RemoveAt(i + 2);
                     raw.RemoveAt(i + 1);
-                    Console.WriteLine(Helper.DUMP(raw));
                     i = 0;
                 } else if (raw[i + 1] == "+" && pass == 2) {
                     try {
@@ -185,7 +182,6 @@
                     }
                     raw.RemoveAt(i + 2);
                     raw.RemoveAt(i + 1);
-                    Console.WriteLine(Helper.DUMP(raw));
                     i = 0;
                 } else if (raw[i + 1] == "-" && pass == 2) {
                     try {
@@ -195,7 +191,6 @@
                     }
                     raw.RemoveAt(i + 2);
                     raw.RemoveAt(i + 1);
-                    Console.WriteLine(Helper.DUMP(raw));
                     i = 0;
                 }
                 i++;
