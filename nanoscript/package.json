@@ -1,0 +1,25 @@
+{
+    "name": "nanoscript",
+    "displayName": "NanoScript",
+    "description": "Syntax Highlighting for NanoScript",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.70.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "nano",
+            "aliases": ["NanoScrip", "nano"],
+            "extensions": [".nano",".n"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "nano",
+            "scopeName": "source.nano",
+            "path": "./syntaxes/nano.tmLanguage.json"
+        }]
+    }
+}

@@ -82,9 +82,11 @@ public class Lexer {
             if (word != "") {
                 words.Add(word);
             }
-            if (words[words.Count-1] != "EOL") {
-                words.Add("EOL");
-            }
+            try {
+                if (words[words.Count - 1] != "EOL") {
+                    words.Add("EOL");
+                }
+            } catch (Exception) {}
         }
         words.Add("EOF");
 #if DEBUG
@@ -117,13 +119,13 @@ public class Lexer {
         ["ext"] = TokenType.k_ext,
         ["ret"] = TokenType.k_ret,
         ["set"] = TokenType.k_set,
+        ["get"] = TokenType.k_get,
         ["err"] = TokenType.k_err,
         ["fnc"] = TokenType.k_fnc,
         ["tbl"] = TokenType.k_tbl,
         ["pck"] = TokenType.k_pck,
         ["let"] = TokenType.k_let,
         ["var"] = TokenType.k_var,
-        ["cst"] = TokenType.k_cst,
         [":"] = TokenType.o_colon,
         ["::"] = TokenType.o_doubleColon,
         ["?"] = TokenType.o_questionmark,
@@ -203,7 +205,7 @@ public class Lexer {
                     case "tbl": token = TokenType.k_tbl; break;
                     case "pck": token = TokenType.k_pck; break;
                     case "let": token = TokenType.k_let; break;
-                    case "cst": token = TokenType.k_cst; break;
+                    case "var": token = TokenType.k_var; break;
                     //////////////////////////////////////////
                     case "i32": token = TokenType.t_int; break;
                     case "int": token = TokenType.t_int; break;
@@ -291,7 +293,7 @@ public class Lexer {
                         break;
                     default:
                         try {
-                            if (words[i - 1] == "let") {
+                            if (words[i - 1] == "let" || words[i - 1] == "var") {
                                 token = TokenType.k_identifier;
                             } else {
                                 token = TokenType.k_refference;
@@ -335,8 +337,10 @@ public class Lexer {
     public static bool StringContains(string src, char[] arr) {
         int check = 0;
         foreach (var c in arr) {
-            if (src.Contains(c)) {
-                check++;
+            foreach (var item in src) {
+                if (c == item) {
+                    check++;
+                }
             }
         }
         return check == src.Length;

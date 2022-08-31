@@ -21,6 +21,8 @@ set arr2[2]
 jmp 7
 :main
 
+
+
 #let
 let a 2
 let arr 12 23 53 63 17 #array
@@ -123,13 +125,13 @@ cll user.ctr
 set b
 let alpha
 let bravo "somefilecontent"
-bravo > "test.txt" #writes to file / add lines
-bravo >> "text.txt" #rewrite whole file
-alpha < "test.txt" #reads file 1 line
-alpha << "test.txt" #reads whole file
-alpha <14 "test.txt" #reads 14 bytes
+get bravo > "test.txt" #writes to file / add lines
+get bravo >> "text.txt" #rewrite whole file
+set alpha < "test.txt" #reads file 1 line
+set alpha << "test.txt" #reads whole file
+set alpha <14 "test.txt" #reads 14 bytes
 cnv alpha ? str #converts alpha to string
-alpha <<3 "test.txt" #reads 3 lines(until \n)
+set alpha <<3 "test.txt" #reads 3 lines(until \n)
 let cfg << "cfg.ini" \ "config.cfg"
 let importsct << "obj.json" \ "obj.xml" #checks if file exists
 

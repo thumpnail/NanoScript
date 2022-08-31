@@ -34,6 +34,8 @@ cpy <varname> <varname>
 err <errcode>
 err <errcode> <message>
 
+#get index arr
+#set var
 get <number|string> <arrname|tablename>
 
 set <varname>

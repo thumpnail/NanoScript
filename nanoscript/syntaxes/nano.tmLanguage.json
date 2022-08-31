@@ -1,0 +1,38 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "NanoScrip",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.nano",
+					"match": "\\b(iff|nif|elf|els|whl|jmp|for)\\b"
+				},
+				{
+					"name": "keyword.operator",
+					"match": "\\b(+|-|*|/)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.nano",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.nano",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.nano"
+}

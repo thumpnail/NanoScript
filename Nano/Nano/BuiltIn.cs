@@ -12,35 +12,19 @@
         }
         return new(final, step);
     }
-    public static readonly Dictionary<string, Action<object[]>> builtInFunctions = new Dictionary<string, Action<object[]>> {
-        ["math.add"] = (object[] @params) => {
-            NanoType value;
-            if (@params[0] is int) {
-                int ret = int.Parse(@params[0].ToString());
-                for (int i = 1; i < @params.Length; i++) {
-                    ret += int.Parse(@params[i].ToString());
-                }
-                
-            }
-        },
-        ["math.sub"] = (object[] @params) => {
-            object ret = @params[0];
-            for (int i = 0; i < @params.Length; i++) {
-
-            }
-        },
-        ["internal.print"] = (object[] @params) => {
+    public static Dictionary<string, Action<object[]>> builtInFunctions = new Dictionary<string, Action<object[]>> {
+        ["core.print"] = (object[] @params) => {
             foreach (var item in @params) {
                 Console.Write(item);
             }
         },
-        ["internal.println"] = (object[] @params) => {
+        ["core.println"] = (object[] @params) => {
             foreach (var item in @params) {
                 Console.WriteLine(item);
             }
         },
     };
     public static Dictionary<string, object> builtInValues = new Dictionary<string, object> {
-        ["pi"] = 0
+        ["math.pi"] = 0
     };
 }

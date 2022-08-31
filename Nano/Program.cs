@@ -2,10 +2,10 @@
 
 public class Program {
     public static void Main(string[] args) {
-        if (args.Count() == 0) return;
 #if DEBUG
         StreamReader sr = new StreamReader(@".\simpletest.nano");
 #elif RELEASE
+        if (args.Count() == 0) return;
         StreamReader sr = new StreamReader(args[0].ToString());
 #endif
         List<string> scriptLines = new List<string>();
@@ -14,6 +14,9 @@ public class Program {
             scriptLines.Add(line);
         }
         scriptLines.Add("\n");
+        //BuiltIn.builtInFunctions.Add("core.dump", (object[] @param) => {
+        //    Console.WriteLine(Helper.DUMP(@param));
+        //});
         sr.Close();
 
         List<string> words = Lexer.preprocessor(scriptLines.ToArray());

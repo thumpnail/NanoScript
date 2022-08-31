@@ -1,7 +1,8 @@
 ﻿public enum TokenType {
     Unkown,
 
-    k_identifier, k_refference,
+    k_identifier, 
+    k_refference,
 
     t_int,
     t_float,
@@ -26,6 +27,7 @@
     k_ext,
     k_ret,
     k_set,
+    k_get,
     k_err,
 
     k_fnc,
@@ -34,8 +36,6 @@
 
     k_let,
     k_var,
-    k_cst,
-
 
     f_cll,
     f_crt,
