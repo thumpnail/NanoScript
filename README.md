@@ -12,4 +12,5 @@
  + Arrays
  + Defining things(dk what for)
  + Lables and jmp(Jump) command
+ + Calling builtIn functions(cll)
  + Funny Compiler Error Messages
