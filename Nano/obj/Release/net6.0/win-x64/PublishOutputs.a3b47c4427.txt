@@ -1,2 +1,0 @@
-C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano Operational Functional Script\bin\Publish\NanoScript.pdb
-C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano Operational Functional Script\bin\Publish\NanoScript.exe
