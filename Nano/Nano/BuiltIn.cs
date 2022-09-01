@@ -15,12 +15,17 @@
     public static Dictionary<string, Action<object[]>> builtInFunctions = new Dictionary<string, Action<object[]>> {
         ["core.print"] = (object[] @params) => {
             foreach (var item in @params) {
-                Console.Write(item);
+                Console.Write(item.ToString());
             }
         },
         ["core.println"] = (object[] @params) => {
             foreach (var item in @params) {
-                Console.WriteLine(item);
+                Console.WriteLine(item.ToString());
+            }
+        },
+        ["core.dump"] = (object[] @params) => {
+            foreach (var item in @params) {
+                Console.WriteLine(Helper.DUMP(item));
             }
         },
     };

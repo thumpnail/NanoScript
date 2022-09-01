@@ -89,7 +89,7 @@ public class Lexer {
             } catch (Exception) {}
         }
         words.Add("EOF");
-#if DEBUG
+#if DEBUG || TEST
         foreach (var item in words) {
             Console.Write(item);
 

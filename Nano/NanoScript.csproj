@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <StartupObject>Program</StartupObject>
 	<PublishSingleFile>true</PublishSingleFile>
+	<Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

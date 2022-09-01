@@ -1,0 +1,5 @@
+let a 12
+let b "hello"
+let c 't'
+let arr 1 2 3 4 5
+let arr2 'a' 1 'b' 2 'c' 3

@@ -1,9 +1,11 @@
 ﻿public class Interpreter {
     public static class Context {
         public static NanoType lastReturn, lastValue;
+        public static Dictionary<string, int> jumpMap;
         public static class Scope {
             static int cScope = 0;
             private static List<Dictionary<string, NanoType>> scope = new List<Dictionary<string, NanoType>>() { new() };
+            public static Dictionary<string, int> lableLookup = new Dictionary<string, int>();
             
             public static NanoType GetValue(string name) {
                 if (ValueExist(name)) return ScopeLookup(name);
@@ -25,6 +27,12 @@
                 throw new NotImplementedException(); 
             }
 
+            public static void CreateLable(string lable, int ip) {
+                if (!Context.Scope.lableLookup.ContainsKey(lable)) {
+                    Context.Scope.lableLookup.Add(lable, ip);
+                } else throw new("Lable Allready Exist");
+            }
+
             public static void ClearScope() {
                 if (scope.Count == 1) return;
                 scope.RemoveAt(scope.Count-1);
@@ -40,9 +48,9 @@
                 if (ValueExist(name)) return;
                 scope[0].Add(name, value);
             }
-            public static void SetValue() {
 
-            }
+            public static void SetValue() { }
+
             public static bool ValueExist(string valueName) {
                 foreach (var subscope in scope) {
                     if (subscope.ContainsKey(valueName)) {
@@ -69,7 +77,7 @@
             public static object? ResolveFnc(string name, object[] @params) {
                 return null;
             }
-            //Removes '"' from a provided Tokenlist | Function Specific
+            
             public static Tuple<List<TokenType>, List<string>> ResolveParameterMap(string[] @params, TokenType[] paraTokens) {
                 //RefferenceMap
                 var list = new List<Tuple<TokenType, string>>();
@@ -107,21 +115,25 @@
             }
 
             public static void printScope() {
-#if DEBUG
-                BetterConsoleTables. Table t = new("Idx", "Name", "Type", "Value", "Dump");
+#if DEBUG || TEST
+                BetterConsoleTables. Table t = new("Id","Idx", "Name", "Type", "Value", "Dump");
                 t.Config = BetterConsoleTables.TableConfiguration.Unicode();
                 int idx = 0;
-                foreach (var item1 in scope) {
-                    foreach (var item2 in item1) {
-                        t.AddRow(idx++, item2.Key, item2.Value.GetType()+":"+ item2.Value.type, item2.Value.ToString(), Helper.DUMP(item2));
+                for (int i = 0; i < scope.Count; i++) {
+                    foreach (var item2 in scope[i]) {
+                        t.AddRow(idx++, i, item2.Key, item2.Value.GetType() + ":" + item2.Value.type, item2.Value.ToString(), Helper.DUMP(item2));
                     }
                 }
                 Console.WriteLine(t.ToString());
 #endif
             }
         }
-        public static NanoType CreateValue(Tuple<List<TokenType>, List<string>> list, bool isArr, bool isCalc, bool isEditable = true) {
+        
+        public static NanoType CreateValue(Tuple<List<TokenType>, List<string>> list, bool isArr, bool isCalc, bool isEditable = true, bool isStatic = false) {
             NanoType value;
+            if (isStatic) {
+                return new NanoValue(true, TokenType.t_bool, isEditable);
+            }
             if (isArr && !isCalc) {
                 //TODO Implement Array
                 List<NanoValue> nanoValues = new List<NanoValue>();
@@ -168,6 +180,7 @@
             }
             return value;
         }
+        
         public static TokenType GuessType(object value) {
             if (value is int) {
                 return TokenType.t_int;
@@ -180,7 +193,7 @@
             } else if (value is string) {
                 return TokenType.t_string;
             } else if (value is NanoValue) {
-                return GuessType(((NanoValue)value).GetValue);
+                return GuessType(((NanoValue)value).GetValue());
             } else if (value is NanoArray) {
                 return TokenType.t_array;
             } else if (value is null) {
@@ -189,7 +202,7 @@
                 return TokenType.Unkown;
             }
         }
-        //Evaluate a string[] and calculate 1 final value || aka string[] => NanuValue
+
         public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list) {
             int i = 0, pass = 0;
             List<string> raw = list.Item2;
@@ -259,26 +272,46 @@
         },
         [TokenType.k_jmp] = (TokenType[] paraTokens, string[] @params) => {
             //Recursive
+            if (Context.Scope.lableLookup.ContainsKey(@params[0])) {
+                Console.WriteLine("Jumping");
+                //set jump
+                IP = Context.Scope.lableLookup[@params[0]];
+            } else {
+                Console.WriteLine("Searching");
+                //is in lable search
+                isSearchMode = true;
+                JP = OP-1;//safe current op
+            }
         },
         [TokenType.k_for] = (TokenType[] paraTokens, string[] @params) => {
             //Recursive
         },
         [TokenType.k_ext] = (TokenType[] paraTokens, string[] @params) => {
             //Recursive
+
+            //Scoop Up Scope
         },
         [TokenType.k_ret] = (TokenType[] paraTokens, string[] @params) => {
             //REM if 1 parameter, use lastReturn, if > 1 use parameter
-            int a = 8;
-            byte[] b = BitConverter.GetBytes(a);
             //var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
 
             //Console.WriteLine(Helper.DUMP(list));
+
+            //Scoop Up Scope
         },
-        [TokenType.k_get] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.k_set] = (TokenType[] paraTokens, string[] @params) => { },
+        [TokenType.k_get] = (TokenType[] paraTokens, string[] @params) => {
+            
+        },
+        [TokenType.k_set] = (TokenType[] paraTokens, string[] @params) => {
+            
+        },
         [TokenType.k_err] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.k_fnc] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.k_tbl] = (TokenType[] paraTokens, string[] @params) => { },
+        [TokenType.k_fnc] = (TokenType[] paraTokens, string[] @params) => {
+            //Recursive
+        },
+        [TokenType.k_tbl] = (TokenType[] paraTokens, string[] @params) => {
+            
+        },
         [TokenType.k_pck] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.k_let] = (TokenType[] paraTokens, string[] @params) => {
             var letname = @params[0];
@@ -301,7 +334,8 @@
             Context.Scope.CreateValue(letname, value);
         },
         [TokenType.f_cll] = (TokenType[] paraTokens, string[] @params) => {
-            //TODO: Resolve Refferences
+            //TODO If not BuiltIn -> Look in scope
+            //TODO Transmited array are not correct
             var path = BuiltIn.PathResolver(@params);
             var funcname = path.Item1;
 
@@ -311,8 +345,7 @@
 
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
 
-            //var varible = Context.Scope.ResolveRef(@params[2]);
-            //TODO Array converts to String "0"
+            //Array converts to String "0" // Resolved: object returns "0" // for fix need to find the correct type in Helper.DUMP()
             BuiltIn.builtInFunctions[funcname](list.Item2.ToArray());
         },
         [TokenType.f_crt] = (TokenType[] paraTokens, string[] @params) => { },
@@ -320,36 +353,58 @@
         [TokenType.f_inc] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.f_cnv] = (TokenType[] paraTokens, string[] @params) => { },
         [TokenType.f_def] = (TokenType[] paraTokens, string[] @params) => {
-            
+            var letname = @params[0];
+            bool isStatic = @params.Length == 0;
+            if (!isStatic) {
+                var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
+                bool isArr = list.Item2.Count > 2;
+                bool isCalc = isArr && (Lexer.StringContains(list.Item2[1], "+-*/()".ToArray()) || Lexer.StringContains(list.Item2[0], "+-*/()".ToArray()));
+
+                var value = Context.CreateValue(list, isArr, isCalc, false, isStatic);
+
+                Context.Scope.CreateGlobal(letname, value);
+            } else Context.Scope.CreateGlobal(letname, new NanoValue(true, TokenType.t_bool));
         },
-        //lable
-        [TokenType.o_colon] = (TokenType[] paraTokens, string[] @params) => { },
-        //deconstruct
+        [TokenType.o_colon] = (TokenType[] paraTokens, string[] @params) => {
+            Context.Scope.CreateLable(@params[0], IP);
+        },
         [TokenType.o_tilde] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.EOL] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.EOF] = (TokenType[] paraTokens, string[] @params) => { },
+        [TokenType.EOL] = (TokenType[] paraTokens, string[] @params) => { },//?
+        [TokenType.EOF] = (TokenType[] paraTokens, string[] @params) => { },//?
     };
 
+    private static int IP = 0,JP = 0,OP = 0;
+    private static bool isSearchMode = false, isLableFound = false;
     public int Execute(List<Tuple<TokenType, string>> tokens) {
         List<TokenType> tokenSequence;
         List<string> parameterSequence;
-        TokenType startToken;
-        for (int ip = 0; ip < tokens.Count; ip++) {
+        TokenType opCode;
+        for (IP = 0; IP < tokens.Count; IP++) {
             tokenSequence = new List<TokenType>();
             parameterSequence = new List<string>();
 
-            startToken = tokens[ip++].Item1;
-            if (startToken == TokenType.k_fnc) {
-                //todo create function
+            OP = IP;
+            opCode = tokens[IP++].Item1;
+            
+            while (IP < tokens.Count && tokens[IP].Item1 != TokenType.EOL) {
+                tokenSequence.Add(tokens[IP].Item1);
+                parameterSequence.Add(tokens[IP++].Item2);
             }
-            if (startToken == TokenType.o_colon) {
-                //todo create lable
+
+            if (opCode == TokenType.k_fnc && isSearchMode) {
+                //TODO create function
             }
-            while (ip < tokens.Count && tokens[ip].Item1 != TokenType.EOL) {
-                tokenSequence.Add(tokens[ip].Item1);
-                parameterSequence.Add(tokens[ip++].Item2);
+
+            if (opCode == TokenType.o_colon && isSearchMode) {
+                isSearchMode = false;
+                executeMap[opCode](tokenSequence.ToArray(), parameterSequence.ToArray());
+                IP = JP;
+                continue;
             }
-            executeMap[startToken](tokenSequence.ToArray(), parameterSequence.ToArray());
+
+            if (!isSearchMode) {
+                executeMap[opCode](tokenSequence.ToArray(), parameterSequence.ToArray());
+            }
         }
         Console.Write("\n");
         return 0x00000000;

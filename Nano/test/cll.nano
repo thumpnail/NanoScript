@@ -1,0 +1,3 @@
+cll core.print "Hello " "World"
+cll core.println "!"
+cll core.dump 12

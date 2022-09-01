@@ -1,0 +1,6 @@
+let a 12
+jmp test
+let b "error"
+:test
+cll core.println a #12
+cll core.println b #error
