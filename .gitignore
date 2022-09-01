@@ -11,3 +11,5 @@
 .vs/
 .vscode/
 nanoscript/
+Nano/bin/
+Nano/obj/
