@@ -14,6 +14,8 @@
  + Lables and jmp(Jump) command
  + Calling builtIn functions(cll)
  + Funny Compiler Error Messages
-## Dependencies
+ + Working functions with returns
+ 
+## Dependencies(for debug onkly)
  + Newtonsoft.Json
  + BetterConsoleTables
