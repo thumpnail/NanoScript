@@ -1,5 +1,7 @@
 ﻿public static class Hlp {
     public static string DUMP(object obj) {
+#if DEBUG
+
         //return System.Text.Json.JsonSerializer.Serialize(obj, obj.GetType(), new System.Text.Json.JsonSerializerOptions() { });
         if (obj is int) return Newtonsoft.Json.JsonConvert.SerializeObject((int)obj);
         if (obj is float) return Newtonsoft.Json.JsonConvert.SerializeObject((float)obj);
@@ -9,6 +11,9 @@
         if (obj is NanoArray) return Newtonsoft.Json.JsonConvert.SerializeObject(((NanoArray)obj).GetValue());
         if (obj is NanoTable) return Newtonsoft.Json.JsonConvert.SerializeObject(((NanoTable)obj).GetValue());
         return Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+#elif RELEASE
+        return "";
+#endif
     }
     public static void DbgLog(object msg) {
 #if DEBUG
