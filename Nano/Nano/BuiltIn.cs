@@ -4,28 +4,28 @@
         string final = "";
         int step = 0;
         final += @params[step++];
-        while (true) {
-            if (@params[step] != "." & (step % 2) == 1) {
+        while (step < @params.Length) {
+            if ((@params[step] != "." || @params[step] != "::") && (step % 2) == 1) {
                 break;
             }
             final += @params[step++];
         }
         return new(final, step);
     }
-    public static Dictionary<string, Action<object[]>> builtInFunctions = new Dictionary<string, Action<object[]>> {
-        ["core.print"] = (object[] @params) => {
+    public static Dictionary<string, Action<NanoType[]>> builtInFunctions = new Dictionary<string, Action<NanoType[]>> {
+        ["print"] = (NanoType[] @params) => {
             foreach (var item in @params) {
                 Console.Write(item.ToString());
             }
         },
-        ["core.println"] = (object[] @params) => {
+        ["println"] = (NanoType[] @params) => {
             foreach (var item in @params) {
                 Console.WriteLine(item.ToString());
             }
         },
-        ["core.dump"] = (object[] @params) => {
+        ["dump"] = (NanoType[] @params) => {
             foreach (var item in @params) {
-                Console.WriteLine(Helper.DUMP(item));
+                Console.WriteLine(Hlp.DUMP(item));
             }
         },
     };

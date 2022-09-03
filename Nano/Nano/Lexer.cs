@@ -90,14 +90,14 @@ public class Lexer {
         }
         words.Add("EOF");
 #if DEBUG || TEST
-        foreach (var item in words) {
-            Console.Write(item);
+        //foreach (var item in words) {
+        //    Console.Write(item);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" | ");
-            Console.ForegroundColor = ConsoleColor.Gray;            
-        }
-        Console.WriteLine();
+        //    Console.ForegroundColor = ConsoleColor.Green;
+        //    Console.Write(" | ");
+        //    Console.ForegroundColor = ConsoleColor.Gray;            
+        //}
+        //Console.WriteLine();
 #endif
         return words;
     }
@@ -150,8 +150,11 @@ public class Lexer {
         ["FAL"] = TokenType.b_FAL,
         ["TRU"] = TokenType.b_TRU
     };
-    public static List<Tuple<TokenType, string>> LexIt(List<string> words) {
-        List<Tuple<TokenType, string>> final = new();
+
+    private static string funcName = "";
+
+    public static Dictionary<string, List<Tuple<TokenType, string>>> LexIt(List<string> words) {
+        Dictionary<string,List<Tuple<TokenType, string>>> final = new() { ["Main"] = new(){ }};
         Stack<string> stack = new();
         stack.Push("ROOT");
         bool insideStr = false, insideChar = false, insideComment = false;
@@ -168,7 +171,12 @@ public class Lexer {
                     token = TokenType.o_dot;
             } else {
                 switch (words[i]) {
-                    case "EOL": token = TokenType.EOL; break;
+                    case "EOL": token = TokenType.EOL;
+                        if (stack.Peek() == "fnc.ret") {
+                            stack.Pop();
+                            stack.Push("fnc.ret.eol");
+                        }
+                        break;
                     case "EOF": token = TokenType.EOF; break;
                     case "::": token = TokenType.o_doubleColon; break;
                     case "~": token = TokenType.o_tilde; break;
@@ -198,10 +206,25 @@ public class Lexer {
                     case "jmp": token = TokenType.k_jmp; break;
                     case "for": token = TokenType.k_for; break;
                     case "ext": token = TokenType.k_ext; break;
-                    case "ret": token = TokenType.k_ret; break;
+                    case "ret":
+                        token = TokenType.k_ret;
+                        if (stack.Peek() == "fnc") {
+                            final[funcName].Add(new(token, words[i]));
+                            stack.Pop();
+                            stack.Push("fnc.ret");
+                            continue;
+                        }
+                        break;
+                    case "get": token = TokenType.k_get; break;
                     case "set": token = TokenType.k_set; break;
                     case "err": token = TokenType.k_err; break;
-                    case "fnc": token = TokenType.k_fnc; break;
+                    case "fnc":
+                        token = TokenType.k_fnc;
+                        stack.Push("fnc");
+                        funcName = words[i + 1];
+                        if (words[i + 2] == "." || (words[i + 2] == ":" && words[i + 2] == ":")) { funcName += words[i + 2]; funcName += words[i + 3]; funcName += words[i + 4]; }
+                        final.Add(funcName, new());
+                        break;
                     case "tbl": token = TokenType.k_tbl; break;
                     case "pck": token = TokenType.k_pck; break;
                     case "let": token = TokenType.k_let; break;
@@ -220,11 +243,12 @@ public class Lexer {
                             token = TokenType.t_charArray;
                         }
                         insideChar = !insideChar;
-                        break;
+                        continue;
                     case "\"":
+                        words.RemoveAt(i--);
                         token = TokenType.t_string;
                         insideStr = !insideStr;
-                        break;
+                        continue;
                     case "[":
                         token = TokenType.s_bracketOpen;
                         if (words[i - 1] == "=") {
@@ -310,23 +334,28 @@ public class Lexer {
                         break;
                 }
             }
-
-            final.Add(new(token, str));
+            if (stack.Peek() == "fnc" || stack.Peek() == "fnc.ret" || stack.Peek() == "fnc.ret.eol") {
+                final[funcName].Add(new(token, str));
+                if(stack.Peek() == "fnc.ret.eol")stack.Pop();
+            } else
+                final["Main"].Add(new(token, str));
             str = "";
         }
         //commentfix
         insideComment = false;
         List<Tuple<TokenType, string>> remlist = new();
-        foreach (var item in final) {
-            if (item.Item2.Contains("\n")) {
-                insideComment = false;
-            } else if (item.Item2.Equals("\n")) {
-                remlist.Add(item);
-            } else if (item.Item2 == "#") {
-                remlist.Add(item);
-                insideComment = true;
-            } else if (insideComment) {
-                remlist.Add(item);
+        foreach (var tlist in final) {
+            foreach (var item in tlist.Value) {
+                if (item.Item2.Contains("\n")) {
+                    insideComment = false;
+                } else if (item.Item2.Equals("\n")) {
+                    remlist.Add(item);
+                } else if (item.Item2 == "#") {
+                    remlist.Add(item);
+                    insideComment = true;
+                } else if (insideComment) {
+                    remlist.Add(item);
+                }
             }
         }
         return final;

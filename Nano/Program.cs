@@ -13,7 +13,7 @@ public class Program {
         sr.Close();
 
         List<string> words = Lexer.preprocessor(scriptLines.ToArray());
-        List<Tuple<TokenType, string>> tokens = Lexer.LexIt(words);
+        Dictionary<string, List<Tuple<TokenType,string>>> tokens = Lexer.LexIt(words);
 
 #elif RELEASE
         if (args.Count() == 0) return;
@@ -27,7 +27,7 @@ public class Program {
         sr.Close();
 
         List<string> words = Lexer.preprocessor(scriptLines.ToArray());
-        List<Tuple<TokenType, string>> tokens = Lexer.LexIt(words);
+        Dictionary<string, List<Tuple<TokenType,string>>> tokens = Lexer.LexIt(words);
 #elif TEST
         string[] testFiles = { "cll.nano", "let.nano"};
         List<Tuple<TokenType, string>> tokens = new();
@@ -42,7 +42,7 @@ public class Program {
             sr.Close();
 
             List<string> words = Lexer.preprocessor(scriptLines.ToArray());
-            tokens = Lexer.LexIt(words);
+            Dictionary<string, List<Tuple<TokenType,string>>> tokens = Lexer.LexIt(words);
 
             Interpreter interpreter = new();
             interpreter.Execute(tokens);
@@ -52,21 +52,42 @@ public class Program {
 
 #if DEBUG
         {
-            Table t = new("Idx", "Token", "Value");
-            t.Config = TableConfiguration.Unicode();
-            int idx = 0;
-            foreach (var item in tokens) {
-                if (item.Item2.Equals("\n")) {
-                    //t.AddRow(idx++, item.Item1, "NEWLINE");
-                } else
-                    t.AddRow(idx++, item.Item1, item.Item2);
+            foreach (var routine in tokens) {
+                Table t = new("Idx", "Token", "Value");
+                t.Config = TableConfiguration.Unicode();
+                int idx = 0;
+                foreach (var item in routine.Value) {
+                    if (item.Item2.Equals("\n")) {
+                        //t.AddRow(idx++, item.Item1, "NEWLINE");
+                    } else
+                        t.AddRow(idx++, item.Item1, item.Item2);
+                }
+                Console.WriteLine(t.ToString());
             }
-            Console.WriteLine(t.ToString());
+        }
+        {
+            foreach (var routine in tokens) {
+                Console.WriteLine("||////////////////////////");
+                Console.WriteLine("||"+routine.Key);
+                Console.WriteLine("||////////////////////////");
+                Table t = new("Idx", "Line");
+                t.Config = TableConfiguration.Unicode();
+                int idx = 0;
+                string final = "";
+                foreach (var word in routine.Value) {
+                    final += word.Item2 + " ";
+                    if (word.Item2.Equals("EOL")) {
+                        t.AddRow(idx++, final);
+                        final = "";
+                    }
+                }
+                Console.WriteLine(t.ToString());
+            }
         }
 #endif
 #if RELEASE || DEBUG
         Interpreter interpreter = new();
-        interpreter.Execute(tokens);
+        int result = interpreter.SetTokens(tokens).Execute();
         Interpreter.Context.Scope.printScope();
 #endif
     }

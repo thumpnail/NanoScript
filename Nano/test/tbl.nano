@@ -1,0 +1,12 @@
+tbl user
+	let name
+	let age
+	let id
+ext
+
+crt thomas user "Thomas" 12 1
+
+get name thomas
+set out
+
+cll println out #Thomas

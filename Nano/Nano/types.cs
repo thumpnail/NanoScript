@@ -2,51 +2,59 @@
     public int id { get; set; }
     public TokenType type { get; set; }
     public bool isEditable { get; }
+    public object? Value { get; set; }
 
     object? GetValue();
     object? GetValue(string index);
     void SetValue(object value);
     void SetValue(string index, object value);
     string ToString();
+    public static NanoType CreateNanoType(object value) {
+        if (value is int) return new NanoValue(value, TokenType.t_int, true);
+        else if (value is float) return new NanoValue(value, TokenType.t_int, true);
+        else if (value is string) return new NanoValue(value, TokenType.t_int, true);
+        return null;
+    }
 }
 public struct NanoValue : NanoType {
     public int id { get; set; }
     public TokenType type { get; set; }
     public bool isEditable { get; private set; }
 
-    object? Value { get; set; }
+    object? value { get; set; }
+    public object? Value { get => value; set => this.value = Value; }
 
     public NanoValue(object? Value, TokenType Type, bool isEditable = false) {
         this.id = IDManager.GetId();
         this.type = Type;
-        this.Value = Value;
+        this.value = Value;
         this.isEditable = isEditable;
-        this.Value = FixType(Value);
+        this.value = FixType(Value);
     }
 
     public object? GetValue() {
-        if (Value is int) {
-            return (int)Value;
-        } else if (Value is float) {
-            return (float)Value;
-        } else if (Value is char) {
-            return (char)Value;
-        } else if (Value is string) {
-            return (string)Value;
-        } else if (Value is null) {
+        if (value is int) {
+            return (int)value;
+        } else if (value is float) {
+            return (float)value;
+        } else if (value is char) {
+            return (char)value;
+        } else if (value is string) {
+            return (string)value;
+        } else if (value is null) {
             return null;
-        } else if (Value is bool) {
-            return (bool)Value;
+        } else if (value is bool) {
+            return (bool)value;
         } else {
-            return Value;
+            return value;
         }
     }
     public void SetValue(object value) {
-        if (isEditable) this.Value = FixType(value);
+        if (isEditable) this.value = FixType(value);
         else throw new Exception("NanoValue is not Editable");
     }
     public override string? ToString() {
-        return Value is null ? "null" : Value.ToString();
+        return value is null ? "null" : value.ToString();
     }
 
     //Returns an Object in the Correct Type
@@ -81,12 +89,13 @@ public struct NanoArray : NanoType {
     public TokenType type { get; set; }
     public bool isEditable { get; private set; }
 
-    int count { get => Value.Count; }
-    List<NanoValue> Value;
+    int count { get => value.Count; }
+    List<NanoValue> value;
+    public object? Value { get => value; set => this.value = (List<NanoValue>)Value; }
 
     public NanoArray(NanoValue[] arr, bool isEditable = false) {
         this.id = IDManager.GetId();
-        this.Value = arr.ToList();
+        this.value = arr.ToList();
         this.type = TokenType.t_array;
         this.isEditable = isEditable;
     }
@@ -94,7 +103,7 @@ public struct NanoArray : NanoType {
     public object? GetValue() {
         //TODO Return object Array
         List<object> final = new();
-        foreach (var item in Value) {
+        foreach (var item in value) {
             final.Add(item.GetValue());
         }
         return final.ToArray();
@@ -102,12 +111,12 @@ public struct NanoArray : NanoType {
     public void SetValue() { }
 
     public void SetValue(object value) {
-        Value.Add(new(value, Interpreter.Context.GuessType(value), true));
+        this.value.Add(new(value, Interpreter.Context.GuessType(value), true));
     }
 
     public override string? ToString() {
         string final = "[";
-        foreach (var item in Value) {
+        foreach (var item in value) {
             final += item.ToString() + ",";
         }
         final += "]";
@@ -117,14 +126,14 @@ public struct NanoArray : NanoType {
     public object? GetValue(string index) {
         int idx;
         if (int.TryParse(index, out idx)) {
-            return Value[idx];
+            return value[idx];
         } else throw new("Out of bounds you stupid fuck");
     }
 
     public void SetValue(string index, object value) {
         int idx;
         if (int.TryParse(index, out idx)) {
-            Value.Insert(idx, new NanoValue(value, Interpreter.Context.GuessType(value), true));
+            this.value.Insert(idx, new NanoValue(value, Interpreter.Context.GuessType(value), true));
         } else throw new("how about you give me a Number next time");
     }
 }
@@ -135,16 +144,17 @@ public struct NanoTable : NanoType {
 
     public bool isEditable { get; private set; }
 
-    Dictionary<string, NanoType> Value;
+    Dictionary<string, NanoType> value;
+    public object? Value { get => value; set => this.value = (Dictionary<string, NanoType>)Value; }
 
     public NanoTable(Dictionary<int,string> indexes, NanoType[] values, bool isEditable = true) {
         this.isEditable = isEditable;
         type = TokenType.k_tbl;
         id = IDManager.GetId();
-        Value = new Dictionary<string, NanoType>();
+        value = new Dictionary<string, NanoType>();
         if (indexes.Count == values.Count())
             for (int i = 0; i < values.Length; i++) {
-                Value.Add(indexes[i], values[i]);
+                value.Add(indexes[i], values[i]);
             }
         else throw new("Shit Aint Working");
     }
@@ -158,29 +168,29 @@ public struct NanoTable : NanoType {
     }
 
     public void SetValue(object value) {
-        if (isEditable) this.Value.Add(Value.Count.ToString(), new NanoValue(value, Interpreter.Context.GuessType(value), true));
+        if (isEditable) this.value.Add(this.value.Count.ToString(), new NanoValue(value, Interpreter.Context.GuessType(value), true));
         else throw new Exception("NanoValue is not Editable");
     }
 
     public object? GetValue(string index) {
-        if (Value.ContainsKey(index)) {
-            return Value[index];
+        if (value.ContainsKey(index)) {
+            return value[index];
         }
         throw new("Check your fax m8");
     }
 
     public void SetValue(string index, object value) {
-        if (!Value.ContainsKey(index)) {
-            Value[index].SetValue(value);
+        if (!this.value.ContainsKey(index)) {
+            this.value[index].SetValue(value);
         } else {
-            Value.Add(index, new NanoValue(value, Interpreter.Context.GuessType(value), true));
+            this.value.Add(index, new NanoValue(value, Interpreter.Context.GuessType(value), true));
         }
         throw new("Check your fax m8");
     }
 
     public override string? ToString() {
         string final = "{";
-        foreach (var item in Value) {
+        foreach (var item in value) {
             final += item.ToString();
         }
         return final+"}";
