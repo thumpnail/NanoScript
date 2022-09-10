@@ -16,6 +16,6 @@
  + Funny Compiler Error Messages
  + Working functions with returns
  
-## Dependencies(for debug onkly)
+## Dependencies(for debug only)
  + Newtonsoft.Json
  + BetterConsoleTables
