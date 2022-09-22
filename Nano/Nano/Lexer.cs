@@ -1,6 +1,6 @@
 public class Lexer {
     public static char[] symbols = {
-        ':', '"', '\'', '[', ']', '<','>', '?', '!', '+', '-', '*', '/', '.', ',', '#'
+        ':', '"', '\'', '[', ']', '(', ')', '<','>', '?', '!', '+', '-', '*', '/', '.', ',', '#'
     };
     public static string[] keywords = {
         "iff", "nif", "elf", "els", "whl",
@@ -159,7 +159,7 @@ public class Lexer {
         stack.Push("ROOT");
         bool insideStr = false, insideChar = false, insideComment = false;
         for (int i = 0; i < words.Count; i++) {
-            TokenType token = TokenType.Unkown;
+            TokenType token = TokenType.unkown;
             string str = words[i];
 
             //is digit
@@ -249,20 +249,18 @@ public class Lexer {
                         token = TokenType.t_string;
                         insideStr = !insideStr;
                         continue;
+                    case "(":
+                        token = TokenType.s_rBracketOpen;
+                        break;
+                    case ")":
+                        token = TokenType.s_rBracketClose;
+                        break;
                     case "[":
                         token = TokenType.s_bracketOpen;
-                        if (words[i - 1] == "=") {
-                            stack.Push("inArray");
-                            token = TokenType.t_array;
-                        } else {
-                            stack.Push("inBrackets");
-                        }
                         break;
                     case "]":
                         token = TokenType.s_bracketClose;
-                        stack.Pop();
                         break;
-
                     case "&": token = TokenType.l_AND; break;
                     case "|": token = TokenType.l_OR; break;
                     case "?": token = TokenType.o_questionmark; break;
@@ -365,14 +363,15 @@ public class Lexer {
     }
     public static bool StringContains(string src, char[] arr) {
         int check = 0;
-        foreach (var c in arr) {
-            foreach (var item in src) {
-                if (c == item) {
-                    check++;
-                }
+        foreach (var item in src) {
+            if (arr.Contains(item)) {
+                check++;
             }
         }
         return check == src.Length;
+    }
+    public static bool StringContains(string src, string[] arr) {
+        return arr.Contains(src);
     }
     public static bool StringEquals(string src, char[] arr) {
         int check = 0;

@@ -184,17 +184,17 @@
             return -1;
         }
 
-        public static NanoType CreateValue(Tuple<List<TokenType>, List<string>> list, bool isArr, bool isCalc, bool isEditable = true, bool isStatic = false) {
+        public static NanoType CreateValue(Tuple<List<TokenType>, List<string>> list, bool isArr, bool isCalc, bool isLogic, bool isEditable = true, bool isStatic = false) {
             NanoType value;
             if (isStatic) {
                 return new NanoValue(true, TokenType.t_bool, isEditable);
             }
-            if (isArr && !isCalc) {
+            if (isArr && !isCalc && !isLogic) {
                 //TODO Implement Array
                 List<NanoValue> nanoValues = new List<NanoValue>();
                 for (int i = 0; i < list.Item2.Count; i++) {
                     switch (list.Item1[i]) {
-                        case TokenType.Unkown:
+                        case TokenType.unkown:
                             break;
                         //case TokenType.k_identifier:
                         //break;
@@ -227,8 +227,9 @@
                     }
                 }
                 value = new NanoArray(nanoValues.ToArray());
-            } else if (isCalc && isArr) {
-                //TODO solve Calculation
+            } else if (isCalc && isArr && !isLogic) {
+                value = Context.Evaluate(list);
+            } else if (!isCalc && isArr && isLogic) {
                 value = Context.Evaluate(list);
             } else {
                 value = new NanoValue(list.Item2[0], list.Item1[0], isEditable);
@@ -254,10 +255,10 @@
             } else if (value is null) {
                 return TokenType.t_nil;
             } else {
-                return TokenType.Unkown;
+                return TokenType.unkown;
             }
         }
-
+        //Blackmagic shit and i still have no clue what the fuck is going on
         public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list) {
             //TODO Add String Workaround
             int i = 0, pass = 0;
@@ -300,6 +301,72 @@
                         raw[i] = (int.Parse(raw[i]) - int.Parse(raw[i + 2])).ToString();
                     } catch (InvalidCastException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) - float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "AND" && pass == 4) {
+                    raw[i] = (bool.Parse(raw[i]) && bool.Parse(raw[i + 2])).ToString();
+
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "OR" && pass == 4) {
+                    raw[i] = (bool.Parse(raw[i]) || bool.Parse(raw[i + 2])).ToString();
+
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "GRT" && pass == 3) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) > int.Parse(raw[i + 2])).ToString();
+                    } catch (InvalidCastException) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) > float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "LES" && pass == 3) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) < int.Parse(raw[i + 2])).ToString();
+                    } catch (InvalidCastException) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) < float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "EQL" && pass == 3) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) == int.Parse(raw[i + 2])).ToString();
+                    } catch (InvalidCastException) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) == float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "LEQ" && pass == 3) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) <= int.Parse(raw[i + 2])).ToString();
+                    } catch (InvalidCastException) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) <= float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "GEQ" && pass == 3) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) >= int.Parse(raw[i + 2])).ToString();
+                    } catch (InvalidCastException) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) >= float.Parse(raw[i + 2].Replace('.', ','))).ToString();
+                    }
+                    raw.RemoveAt(i + 2);
+                    raw.RemoveAt(i + 1);
+                    i = 0;
+                } else if (raw[i + 1] == "NEQ" && pass == 3) {
+                    try {
+                        raw[i] = (int.Parse(raw[i]) != int.Parse(raw[i + 2])).ToString();
+                    } catch (InvalidCastException) {
+                        raw[i] = (float.Parse(raw[i].Replace('.', ',')) != float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
                     raw.RemoveAt(i + 1);
@@ -375,8 +442,9 @@
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
             bool isArr = list.Item2.Count > 2;
             bool isCalc = isArr && (Lexer.StringContains(list.Item2[1], "+-*/()".ToArray()) || Lexer.StringContains(list.Item2[0], "+-*/()".ToArray()));
+            bool isLogic = isArr && (Lexer.StringContains(list.Item2[1], new[] { "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }) || Lexer.StringContains(list.Item2[0], new[] { "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }));
 
-            var value = Context.CreateValue(list, isArr, isCalc, false);
+            var value = Context.CreateValue(list, isArr, isCalc, isLogic, false);
 
             Context.Scope.CreateValue(letname, value);
         },
@@ -385,8 +453,9 @@
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
             bool isArr = list.Item2.Count > 2;
             bool isCalc = isArr && (Lexer.StringContains(list.Item2[1], "+-*/()".ToArray()) || Lexer.StringContains(list.Item2[0], "+-*/()".ToArray()));
+            bool isLogic = isArr && (Lexer.StringContains(list.Item2[1], new []{ "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }) || Lexer.StringContains(list.Item2[0], new []{ "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }));
 
-            var value = Context.CreateValue(list, isArr, isCalc);
+            var value = Context.CreateValue(list, isArr, isCalc, isLogic);
 
             Context.Scope.CreateValue(letname, value);
         },

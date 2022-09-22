@@ -33,18 +33,18 @@ public struct NanoValue : NanoType {
     }
 
     public object? GetValue() {
-        if (value is int) {
-            return (int)value;
-        } else if (value is float) {
-            return (float)value;
-        } else if (value is char) {
-            return (char)value;
-        } else if (value is string) {
-            return (string)value;
+        if (value is int i) {
+            return i;
+        } else if (value is float f) {
+            return f;
+        } else if (value is char c) {
+            return c;
+        } else if (value is string s) {
+            return s;
         } else if (value is null) {
             return null;
-        } else if (value is bool) {
-            return (bool)value;
+        } else if (value is bool b) {
+            return b;
         } else {
             return value;
         }
@@ -213,7 +213,7 @@ struct TNano {
     private object? value;//Int,Float,Bool,String,NanoValue,NanoArray,NanoTable
     public TokenType internalType { get; private set; }
 
-    public TNano() { this.value = new Object();internalType = TokenType.Unkown; }
+    public TNano() { this.value = new Object();internalType = TokenType.unkown; }
     public TNano(string val) { this.value = val; internalType = TokenType.t_string; }
     public TNano(int val) { this.value = val; internalType = TokenType.t_int; }
     public TNano(float val) { this.value = val; internalType = TokenType.t_float; }

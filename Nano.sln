@@ -5,6 +5,8 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NanoScript", "Nano\NanoScript.csproj", "{737B152B-7EE2-4A57-8507-5A38E7F8B393}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShittyRefference", "ShittyRefference\ShittyRefference.csproj", "{3326FE11-6393-4AAB-A22D-266ADEA49511}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,12 @@ Global
 		{737B152B-7EE2-4A57-8507-5A38E7F8B393}.Release|Any CPU.Build.0 = Release|Any CPU
 		{737B152B-7EE2-4A57-8507-5A38E7F8B393}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{737B152B-7EE2-4A57-8507-5A38E7F8B393}.Test|Any CPU.Build.0 = Test|Any CPU
+		{3326FE11-6393-4AAB-A22D-266ADEA49511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3326FE11-6393-4AAB-A22D-266ADEA49511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3326FE11-6393-4AAB-A22D-266ADEA49511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3326FE11-6393-4AAB-A22D-266ADEA49511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3326FE11-6393-4AAB-A22D-266ADEA49511}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{3326FE11-6393-4AAB-A22D-266ADEA49511}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

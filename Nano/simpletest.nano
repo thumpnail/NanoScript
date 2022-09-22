@@ -1,18 +1,2 @@
-let a 12
-let b 13
-
-cll simpleAdd a b
-set c
-cll simpleSub b a
-set d
-	
-cll println c
-cll println d
-	
-fnc simpleSub val1 val2
-	let res val1 - val2
-ret res
-	
-fnc simpleAdd val1 val2
-	let res val1 + val2
-ret res
+var bool 6 + 2 * 4
+cll println bool

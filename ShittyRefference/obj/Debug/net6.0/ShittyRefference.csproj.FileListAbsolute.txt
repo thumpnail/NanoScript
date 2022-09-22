@@ -1,0 +1,12 @@
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\bin\Debug\net6.0\ShittyRefference.deps.json
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\bin\Debug\net6.0\ShittyRefference.dll
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\bin\Debug\net6.0\ShittyRefference.pdb
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.csproj.AssemblyReference.cache
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.AssemblyInfoInputs.cache
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.AssemblyInfo.cs
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.csproj.CoreCompileInputs.cache
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.dll
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\refint\ShittyRefference.dll
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.pdb
+C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ref\ShittyRefference.dll

@@ -1,8 +1,8 @@
 ﻿public enum TokenType {
-    Unkown,
+    unkown = 0,
 
-    k_identifier, 
-    k_refference,
+    k_identifier = 1, 
+    k_refference = 2,
 
     t_int,
     t_float,
@@ -10,11 +10,14 @@
     t_char,
     t_charArray,
     t_array,
-    t_nil,
     t_bool,
+    t_nil,
+
 
     s_bracketOpen,
     s_bracketClose,
+    s_rBracketOpen,
+    s_rBracketClose,
 
     k_iff,
     k_nif,
@@ -51,6 +54,7 @@
     l_EQL,
     l_LEQ,
     l_GEQ,
+    l_NEQ,
 
     b_FAL,
     b_TRU,
