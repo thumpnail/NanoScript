@@ -7,15 +7,16 @@
  Language Definition is contained in [def.nano](./Nano/def.nano)
  Some fancy imaginary shit is contained in [test.nano](./Nano/Test.nano)
 ## Currently working Features
- [] Variables(var)
- [] Constants(let)
- + Arrays
- + Defining things(dk what for)
- + Lables and jmp(Jump) command
- + Calling builtIn functions(cll)
- + Funny Compiler Error Messages
- + Working functions with returns
- + Kinda working If (needs testing but seems stable)
+ - [x] Variables(var)
+ - [x] Constants(let)
+ - [x] Arrays
+ - [x] Defining things(dk what for)
+ - [x] Lables and jmp(Jump) command
+ - [x] Calling builtIn functions(cll)
+ - [x] Funny Compiler Error Messages
+ - [x] Working functions with returns
+ - [x] Kinda working If (needs testing but seems stable)
+ - [ ] Else
  
 ## Dependencies(for debug only)
  + Newtonsoft.Json
