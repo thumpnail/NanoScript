@@ -157,17 +157,17 @@ public class Lexer {
         Dictionary<string,List<Tuple<TokenType, string>>> final = new() { ["Main"] = new(){ }};
         Stack<string> stack = new();
         stack.Push("ROOT");
-        bool insideStr = false, insideChar = false, insideComment = false;
+        bool insideStr = false, insideChar = false, insideComment = false, insideFunction = false;
         for (int i = 0; i < words.Count; i++) {
             TokenType token = TokenType.unkown;
             string str = words[i];
 
             //is digit
-            if (StringContains(words[i], "-1234567890.".ToArray())) {
+            if (StringExistOf(words[i], "-1234567890".ToArray())) {
                 token = TokenType.t_int;
-            } else if (StringContains(words[i], "-1234567890.".ToArray())) {
+            } else if (StringExistOf(words[i], "-1234567890.".ToArray())) {
                 token = TokenType.t_float;
-                if (!StringContains(words[i], "-1234567890".ToArray()))
+                if (!StringExistOf(words[i], "-1234567890".ToArray()))
                     token = TokenType.o_dot;
             } else {
                 switch (words[i]) {
@@ -198,20 +198,34 @@ public class Lexer {
                     case "FAL": token = TokenType.b_FAL; break;
                     case "TRU": token = TokenType.b_TRU; break;
 
-                    case "iff": token = TokenType.k_iff; break;
-                    case "nif": token = TokenType.k_nif; break;
-                    case "elf": token = TokenType.k_elf; break;
-                    case "els": token = TokenType.k_els; break;
-                    case "whl": token = TokenType.k_whl; break;
-                    case "jmp": token = TokenType.k_jmp; break;
-                    case "for": token = TokenType.k_for; break;
-                    case "ext": token = TokenType.k_ext; break;
+                    case "iff": 
+                        stack.Push("iff");
+                        token = TokenType.k_iff; break;
+                    case "elf":
+                        stack.Push("elf");
+                        token = TokenType.k_elf; break;
+                    case "els":
+                        stack.Push("els");
+                        token = TokenType.k_els; break;
+                    case "whl":
+                        stack.Push("whl");
+                        token = TokenType.k_whl; break;
+                    case "jmp":
+                        stack.Push("jmp");
+                        token = TokenType.k_jmp; break;
+                    case "for":
+                        stack.Push("for");
+                        token = TokenType.k_for; break;
+                    case "ext":
+                        stack.Pop(); 
+                        token = TokenType.k_ext; break;
                     case "ret":
                         token = TokenType.k_ret;
-                        if (stack.Peek() == "fnc") {
-                            final[funcName].Add(new(token, words[i]));
+                        final[funcName].Add(new(token, words[i]));
+                        if (stack.Peek() == "fnc" && insideFunction) {
                             stack.Pop();
                             stack.Push("fnc.ret");
+                            insideFunction = false;
                             continue;
                         }
                         break;
@@ -219,6 +233,7 @@ public class Lexer {
                     case "set": token = TokenType.k_set; break;
                     case "err": token = TokenType.k_err; break;
                     case "fnc":
+                        insideFunction = true;
                         token = TokenType.k_fnc;
                         stack.Push("fnc");
                         funcName = words[i + 1];
@@ -332,7 +347,7 @@ public class Lexer {
                         break;
                 }
             }
-            if (stack.Peek() == "fnc" || stack.Peek() == "fnc.ret" || stack.Peek() == "fnc.ret.eol") {
+            if (stack.Peek() == "fnc" || stack.Peek() == "jmp" || stack.Peek() == "iff" || stack.Peek() == "elf" || stack.Peek() == "els" || stack.Peek() == "whl" || stack.Peek() == "for" || stack.Peek() == "fnc.ret" || stack.Peek() == "fnc.ret.eol") {
                 final[funcName].Add(new(token, str));
                 if(stack.Peek() == "fnc.ret.eol")stack.Pop();
             } else
@@ -361,6 +376,15 @@ public class Lexer {
     public static List<Tuple<TokenType, string>>? LexItV2(List<string> words) {
         return null;
     }
+    public static bool StringExistOf(string src, char[] arr) {
+        int check = 0;
+        foreach (var item in src) {
+            if (arr.Contains(item)) {
+                check++;
+            }
+        }
+        return check == src.Length; // Exist Of
+    }
     public static bool StringContains(string src, char[] arr) {
         int check = 0;
         foreach (var item in src) {
@@ -368,7 +392,7 @@ public class Lexer {
                 check++;
             }
         }
-        return check == src.Length;
+        return check >= 0;//Contains
     }
     public static bool StringContains(string src, string[] arr) {
         return arr.Contains(src);

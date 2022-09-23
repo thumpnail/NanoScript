@@ -1,0 +1,8 @@
+cll simpleFunc
+set val
+cll println val
+
+fnc simpleFunc a b c
+	let res a + b
+	cll println c
+ret res

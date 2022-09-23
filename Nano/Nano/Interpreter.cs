@@ -6,8 +6,8 @@
         public static Dictionary<string, List<Tuple<TokenType, string>>> functions = new();
 
         public class Scope {
-            static int cScope = 0;
-            private static List<Dictionary<string, NanoType>> scope = new() { new() };
+            public static int cScope = 0;
+            private static List<Dictionary<string, NanoType>> scope = new() { new() { ["TRE"] = NanoValue.boolTrue, ["FLE"] = NanoValue.boolFalse } };
             public static Dictionary<string, int> lableLookup = new();//Lable + Position
             public static Dictionary<string, string[]> functionLookup = new(); //Contains info about functions
             public static Stack<int> CallStack = new();//from where the current function is called
@@ -19,13 +19,24 @@
 
             public static void SetValue(string name, NanoType nanoValue) {
                 if (!ValueExist(name))
-                    scope[cScope].Add(name, nanoValue);
-                else
                     throw new Exception("The value you are looking for does not exist...");
+
+                int scopeIndex = -1;
+                foreach (var item in scope) {
+                    scopeIndex++;
+                    if (item.ContainsKey(name)) {
+                        break;
+                    }
+                }
+
+                scope[scopeIndex][name] = nanoValue;
             }
 
             public static void CreateValue(string name, NanoType nanoValue) {
-                scope[cScope].Add(name, nanoValue);
+                if (!ValueExist(name))
+                    scope[cScope].Add(name, nanoValue);
+                else
+                    SetValue(name, nanoValue);
             }
 
             public static void CloneValue(string name) {
@@ -76,7 +87,6 @@
 
             private static NanoType[] ResolveParameterValues(object[] @params) {
                 List<NanoType> values = new List<NanoType>();
-                //TODO make Parameter Array and Table
                 foreach (var item in @params) {
                     if (item is int || item is float || item is string) values.Add(NanoType.CreateNanoType(item));
                     //else if (item is NanoArray) Console.WriteLine(Hlp.DUMP(item));
@@ -86,6 +96,7 @@
             }
 
             public static void CreateScope() {
+                Hlp.DbgLog("Interpreter.Context.Scope.CreateScope", "Creating Scope", ConsoleColor.Green);
                 scope.Add(new());
                 cScope++;
             }
@@ -186,8 +197,8 @@
 
         public static NanoType CreateValue(Tuple<List<TokenType>, List<string>> list, bool isArr, bool isCalc, bool isLogic, bool isEditable = true, bool isStatic = false) {
             NanoType value;
-            if (isStatic) {
-                return new NanoValue(true, TokenType.t_bool, isEditable);
+            if (isStatic) { //def
+                return new NanoValue(true, TokenType.t_bool, false);
             }
             if (isArr && !isCalc && !isLogic) {
                 //TODO Implement Array
@@ -228,9 +239,9 @@
                 }
                 value = new NanoArray(nanoValues.ToArray());
             } else if (isCalc && isArr && !isLogic) {
-                value = Context.Evaluate(list);
+                value = Context.Evaluate(list, isEditable);
             } else if (!isCalc && isArr && isLogic) {
-                value = Context.Evaluate(list);
+                value = Context.Evaluate(list, isEditable);
             } else {
                 value = new NanoValue(list.Item2[0], list.Item1[0], isEditable);
             }
@@ -242,7 +253,7 @@
                 return TokenType.t_int;
             } else if (value is float) {
                 return TokenType.t_float;
-            } else if (value is bool) {
+            } else if (value is bool || value == "True" || value == "False") {
                 return TokenType.t_bool;
             } else if (value is char) {
                 return TokenType.t_char;
@@ -259,11 +270,14 @@
             }
         }
         //Blackmagic shit and i still have no clue what the fuck is going on
-        public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list) {
+        public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list, bool isEditable = false) {
             //TODO Add String Workaround
             int i = 0, pass = 0;
             List<string> raw = list.Item2;
             while (raw.Count > 1) {
+                if (pass > 6) {
+                    break;
+                }
                 if (i + 1 == raw.Count) { i = 0; pass++; }
                 if (raw[i + 1] == "(" && pass == 0) {
 
@@ -272,7 +286,7 @@
                 } else if (raw[i + 1] == "*" && pass == 1) {
                     try {
                         raw[i] = (int.Parse(raw[i]) * int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) * float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -281,7 +295,7 @@
                 } else if (raw[i + 1] == "/" && pass == 1) {
                     try {
                         raw[i] = (int.Parse(raw[i]) / int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) / float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -290,7 +304,7 @@
                 } else if (raw[i + 1] == "+" && pass == 2) {
                     try {
                         raw[i] = (int.Parse(raw[i]) + int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) + float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -299,7 +313,7 @@
                 } else if (raw[i + 1] == "-" && pass == 2) {
                     try {
                         raw[i] = (int.Parse(raw[i]) - int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) - float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -320,7 +334,7 @@
                 } else if (raw[i + 1] == "GRT" && pass == 3) {
                     try {
                         raw[i] = (int.Parse(raw[i]) > int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) > float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -329,7 +343,7 @@
                 } else if (raw[i + 1] == "LES" && pass == 3) {
                     try {
                         raw[i] = (int.Parse(raw[i]) < int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) < float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -338,7 +352,7 @@
                 } else if (raw[i + 1] == "EQL" && pass == 3) {
                     try {
                         raw[i] = (int.Parse(raw[i]) == int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) == float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -347,7 +361,7 @@
                 } else if (raw[i + 1] == "LEQ" && pass == 3) {
                     try {
                         raw[i] = (int.Parse(raw[i]) <= int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) <= float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -356,7 +370,7 @@
                 } else if (raw[i + 1] == "GEQ" && pass == 3) {
                     try {
                         raw[i] = (int.Parse(raw[i]) >= int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) >= float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -365,7 +379,7 @@
                 } else if (raw[i + 1] == "NEQ" && pass == 3) {
                     try {
                         raw[i] = (int.Parse(raw[i]) != int.Parse(raw[i + 2])).ToString();
-                    } catch (InvalidCastException) {
+                    } catch (FormatException) {
                         raw[i] = (float.Parse(raw[i].Replace('.', ',')) != float.Parse(raw[i + 2].Replace('.', ','))).ToString();
                     }
                     raw.RemoveAt(i + 2);
@@ -374,21 +388,49 @@
                 }
                 i++;
             }
-            return new NanoValue((object)raw[0], GuessType((object)raw[0]));
+            return new NanoValue((object)raw[0], GuessType((object)raw[0]), isEditable);
         }
     }
     private static Dictionary<TokenType, Action<TokenType[], string[]>> executeMap = new Dictionary<TokenType, Action<TokenType[], string[]>> {
         [TokenType.k_iff] = (TokenType[] paraTokens, string[] @params) => {
             //Recursive
-        },
-        [TokenType.k_nif] = (TokenType[] paraTokens, string[] @params) => {
-            //Recursive
+            _isIf = true;
+            var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
+            if (list.Item1.Count == 1 && list.Item1[0] == TokenType.t_bool && (list.Item2[0] == "True" || list.Item2[0] == "1")) {
+                Context.Scope.CreateScope();
+                Hlp.DbgLog(msg: Hlp.DUMP(list), from: "iff");
+            } else {
+                _isIfOvertake = true;
+            }
         },
         [TokenType.k_elf] = (TokenType[] paraTokens, string[] @params) => {
+            if (!_isIf) {
+                return;
+            }
+            _isIfOvertake = false;
+            Context.Scope.ClearScope();
+            Context.Scope.CreateScope();
             //Recursive
+            var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
+            if (list.Item1.Count == 1 && list.Item1[0] == TokenType.t_bool && (list.Item2[0] == "True" || list.Item2[0] != "0" || list.Item2[0] != "nil")) {
+                Context.Scope.CreateScope();
+                Hlp.DbgLog(msg: Hlp.DUMP(list), from: "iff");
+            } else {
+                _isIfOvertake = true;
+            }
         },
         [TokenType.k_els] = (TokenType[] paraTokens, string[] @params) => {
+            if (!_isIf) {
+                return;
+            }
+            _isIfOvertake = false;
+            //TODO ignore parameter
+            Context.Scope.ClearScope();
+            Context.Scope.CreateScope();
             //Recursive
+            if (!_isIf) {
+                return;
+            }
         },
         [TokenType.k_whl] = (TokenType[] paraTokens, string[] @params) => {
             //Recursive
@@ -400,7 +442,7 @@
                 execStack.getValues[execStack.Count-1].IP = Context.Scope.lableLookup[@params[0]];
             } else {
                 //is in lable search
-                isLableSearchMode = true;
+                _isLableSearchMode = true;
                 execStack.Peek.JP = execStack.Peek.OP;//safe current op
             }
         },
@@ -408,13 +450,19 @@
             //Recursive
         },
         [TokenType.k_ext] = (TokenType[] paraTokens, string[] @params) => {
+            if ((_isIf || _isFor || _isWhile)) {
+                Context.Scope.ClearScope();
+            }
             //Recursive
 
             //Scoop Up Scope
+
+            _isIf = false; 
+            _isIfOvertake = false;
         },
         [TokenType.k_ret] = (TokenType[] paraTokens, string[] @params) => {
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
-            Context.lastReturn = list.Item2.Count >= 1 ? Context.Evaluate(list) : NanoType.CreateNanoType(list.Item2[0] as object);
+            Context.lastReturn = list.Item2.Count >= 1 ? Context.Evaluate(list, true) : NanoType.CreateNanoType(list.Item2[0] as object);
             Context.Scope.printScope();
             Context.Scope.ClearScope();
         },
@@ -423,7 +471,19 @@
         },
         [TokenType.k_set] = (TokenType[] paraTokens, string[] @params) => {
             Hlp.DbgLog("Interpreter.executeMap.k_set", $"LastReturn:{Context.lastReturn}||Params:{Hlp.DUMP(@params)}", ConsoleColor.Magenta);
-            Context.Scope.CreateValue(@params[0], Context.lastReturn);
+            if (@params.Length == 1) {
+                Context.Scope.CreateValue(@params[0], Context.lastReturn);
+            } else if (@params.Length > 1) {
+                var letname = @params[0];
+                var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
+
+                bool isArr = list.Item2.Count > 2;
+                bool isCalc = isArr && (Lexer.StringContains(list.Item2[1], "+-*/()".ToArray()) || Lexer.StringContains(list.Item2[0], "+-*/()".ToArray()));
+                bool isLogic = isArr && (Lexer.StringContains(list.Item2[1], new[] { "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }) || Lexer.StringContains(list.Item2[0], new[] { "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }));
+
+                var value = Context.CreateValue(list, isArr, isCalc, isLogic, true);
+                Context.Scope.SetValue(letname, value);
+            }
             //TODO more options
         },
         [TokenType.k_err] = (TokenType[] paraTokens, string[] @params) => { },
@@ -455,7 +515,7 @@
             bool isCalc = isArr && (Lexer.StringContains(list.Item2[1], "+-*/()".ToArray()) || Lexer.StringContains(list.Item2[0], "+-*/()".ToArray()));
             bool isLogic = isArr && (Lexer.StringContains(list.Item2[1], new []{ "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }) || Lexer.StringContains(list.Item2[0], new []{ "AND", "OR", "GRT", "LES", "EQL", "LEQ", "GEQ" }));
 
-            var value = Context.CreateValue(list, isArr, isCalc, isLogic);
+            var value = Context.CreateValue(list, isArr, isCalc, isLogic, true);
 
             Context.Scope.CreateValue(letname, value);
         },
@@ -471,6 +531,11 @@
             }
 
             var list = Context.Scope.ResolveParameterMap(@params, paraTokens);
+
+            if (list.Item1[0] == TokenType.k_identifier) {
+                list.Item1.RemoveAt(0);
+                list.Item2.RemoveAt(0);
+            }
 
             //Array converts to String "0" // Resolved: object returns "0" // for fix need to find the correct type in Helper.DUMP()
             Context.Scope.CallFunction(funcname, list.Item2.ToArray());
@@ -496,12 +561,16 @@
             Context.Scope.CreateLable(@params[0], execStack.Peek.IP);
         },
         [TokenType.o_tilde] = (TokenType[] paraTokens, string[] @params) => { },
-        [TokenType.EOL] = (TokenType[] paraTokens, string[] @params) => { },//?
-        [TokenType.EOF] = (TokenType[] paraTokens, string[] @params) => { },//?
+        [TokenType.EOL] = (TokenType[] paraTokens, string[] @params) => { }, //?
+        [TokenType.EOF] = (TokenType[] paraTokens, string[] @params) => { }, //?
     };
 
     //private static int IP = 0, JP = 0, OP = 0, LC = 0;//IP: Instruction Pointer, JP: Jump Pointer, OP: OpCode(Operation) Pointer, FP: Call Pointer(mby FP for Function Pointer)
-    private static bool isLableSearchMode = false;
+    private static bool _isLableSearchMode = false;
+    private static bool _isIf = false, _isIfOvertake = false;
+    private static bool _isFor = false, _isForOvertake = false;
+    private static bool _isWhile = false, _isWhileOvertake = false;
+
 
     public int Execute() {
         //Console.WriteLine(Hlp.DUMP(Context.functions));
@@ -531,16 +600,25 @@
                 parameterSequence.Add(tokens[execStack.Peek.IP++].Item2);
             }
             execStack.Peek.LC++;
-            Hlp.DbgLog(from: "Execute", msg: $"{opCode}:{Hlp.DUMP(parameterSequence)}", ConsoleColor.Cyan);
 
-            if (opCode == TokenType.o_colon && isLableSearchMode) {
-                isLableSearchMode = false;
+            if (opCode == TokenType.o_colon && _isLableSearchMode) {
+                _isLableSearchMode = false;
                 executeMap[opCode](tokenSequence.ToArray(), parameterSequence.ToArray());
                 execStack.Peek.IP = execStack.Peek.JP;
                 continue;
             }
 
-            if ((!isLableSearchMode)) {
+            if (_isIf) {
+                if (opCode == TokenType.k_ext) {
+                    _isIfOvertake = false;
+                }
+                if (_isIfOvertake) {
+                    continue;
+                }
+            }
+
+            if ((!_isLableSearchMode)) {
+                Hlp.DbgLog(from: "Execute", msg: $"{opCode}:{Hlp.DUMP(parameterSequence)}", ConsoleColor.Cyan);
                 executeMap[opCode](tokenSequence.ToArray(), parameterSequence.ToArray());
             }
         }
@@ -565,21 +643,27 @@
         return this;
     }
     public class ExecCache {
-        private int lc = 0;
-        private int ip = 0;
-        private int jp = 0;
-        private int op = 0;
+        private int lc = 0; //lable counter
+        private int ip = 0; //istruction pointer
+        private int jp = 0; //jumpPointer
+        private int op = 0; //operation pointer
+        private int fp = 0; //for pointer //inactive
+        private int wp = 0; //while pointer
 
         public ExecCache() {
             IP = 0; 
             JP = 0; 
             OP = 0; 
             LC = 0;
+            FP = 0;
+            WP = 0;
         }
 
         public int IP { get => ip; set => ip = value; }
         public int JP { get => jp; set => jp = value; }
         public int OP { get => op; set => op = value; }
         public int LC { get => lc; set => lc = value; }
+        public int FP { get => fp; set => fp = value; }
+        public int WP { get => wp; set => wp = value; }
     }
 }

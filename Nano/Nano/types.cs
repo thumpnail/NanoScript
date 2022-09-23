@@ -17,6 +17,9 @@
     }
 }
 public struct NanoValue : NanoType {
+    public static NanoValue boolTrue = new(true, TokenType.t_bool, false);
+    public static NanoValue boolFalse = new(false, TokenType.t_bool, false);
+
     public int id { get; set; }
     public TokenType type { get; set; }
     public bool isEditable { get; private set; }

@@ -1,2 +1,13 @@
-var bool 6 + 2 * 4
-cll println bool
+cll boolTest TRE
+set res
+cll println res
+
+cll boolTest FLE
+set res
+cll println res
+
+fnc boolTest in
+	iff in
+		cll println "T-r-u-e"
+	ext
+ret -1
