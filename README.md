@@ -21,3 +21,6 @@
 ## Dependencies(for debug only)
  + Newtonsoft.Json
  + BetterConsoleTables
+
+### Footnote
+It should be now possible to create a fibonacci calculator
