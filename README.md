@@ -7,8 +7,8 @@
  Language Definition is contained in [def.nano](./Nano/def.nano)
  Some fancy imaginary shit is contained in [test.nano](./Nano/Test.nano)
 ## Currently working Features
- + Variables(var)
- + Constants(let)
+ [] Variables(var)
+ [] Constants(let)
  + Arrays
  + Defining things(dk what for)
  + Lables and jmp(Jump) command
