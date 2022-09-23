@@ -15,6 +15,7 @@
  + Calling builtIn functions(cll)
  + Funny Compiler Error Messages
  + Working functions with returns
+ + Kinda working If (needs testing but seems stable)
  
 ## Dependencies(for debug only)
  + Newtonsoft.Json
