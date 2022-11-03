@@ -23,4 +23,4 @@
  + BetterConsoleTables
 
 ### Footnote
-It should be now possible to create a fibonacci calculator
+It should be now possible to create a fibonacci calculator(it doesn't)
