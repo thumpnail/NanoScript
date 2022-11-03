@@ -8,6 +8,8 @@
 *.png
 
 # ignore ALL files in ANY directory named temp
+.lite_workspace.lua 
+
 .vs/
 .vscode/
 nanoscript/
