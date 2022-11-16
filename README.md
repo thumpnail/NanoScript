@@ -11,7 +11,7 @@
  - [x] Constants(let)
  - [x] Arrays
  - [x] Defining things(dk what for)
- - [x] Lables and jmp(Jump) command
+ - [ ] Lables and jmp(Jump) command (Broke Somehow and dont know why)
  - [x] Calling builtIn functions(cll)
  - [x] Funny Compiler Error Messages
  - [x] Working functions with returns
