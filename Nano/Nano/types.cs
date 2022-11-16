@@ -4,7 +4,7 @@
     public bool isEditable { get; }
     public object? Value { get; set; }
 
-    object? GetValue();
+    object? GetValue(); //Unwrap
     object? GetValue(string index);
     void SetValue(object value);
     void SetValue(string index, object value);

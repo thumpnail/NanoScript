@@ -1,13 +1,33 @@
-cll boolTest TRE
-set res
-cll println res
+# fnc fib n
+# 	iff n LES 2 
+# 		ret n
+# 	ext
+# 	
+# 	set n n - 1
+# 	
+# 	cll fib n
+# 	set fib1
+# 	
+# 	set n n - 1
+# 	
+# 	cll fib n
+# 	set fib2
+# ret fib1 + fib2
+# 
+# cll fib 5
+# set res
+# 
+# cll println res
 
-cll boolTest FLE
-set res
-cll println res
+cll TEST 12 24
+cll println "done"
 
-fnc boolTest in
-	iff in
-		cll println "T-r-u-e"
+fnc TEST A B
+	iff B LES A
+		cll println "Did not work"
 	ext
-ret -1
+ret
+
+# cll clock.start
+# cll println "Hello World!"
+# cll clock.stop

@@ -1,0 +1,20 @@
+fnc fib n
+	iff n LES 2 
+		ret n
+	ext
+	
+	set n n - 1
+	
+	cll fib n
+	set fib1
+	
+	set n n - 1
+	
+	cll fib n
+	set fib2
+ret fib1 + fib2
+
+cll fib 2
+set res
+
+cll println res

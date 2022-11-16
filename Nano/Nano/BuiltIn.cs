@@ -1,4 +1,7 @@
-﻿public class BuiltIn {
+﻿using System.Diagnostics;
+
+public class BuiltIn {
+    private static Stack<Stopwatch> stopwatches = new();
     //takes a Parameterlist and returns only the path for builtins
     public static Tuple<string, int> PathResolver(string[] @params) {
         string final = "";
@@ -28,8 +31,14 @@
                 Console.WriteLine(Hlp.DUMP(item));
             }
         },
+        ["clock.start"] = (NanoType[] @params) => {
+            stopwatches.Push(Stopwatch.StartNew());
+        },
+        ["clock.stop"] = (NanoType[] @params) => {
+            Console.WriteLine(stopwatches.Pop().ElapsedMilliseconds);
+        }
     };
     public static Dictionary<string, object> builtInValues = new Dictionary<string, object> {
-        ["math.pi"] = 0
+        ["math.pi"] = Math.PI
     };
 }

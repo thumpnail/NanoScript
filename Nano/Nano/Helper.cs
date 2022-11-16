@@ -13,6 +13,8 @@
         return Newtonsoft.Json.JsonConvert.SerializeObject(obj);
 #elif RELEASE
         return "";
+#elif TEST
+        return "";
 #endif
     }
     public static void DbgLog(object msg) {
@@ -57,4 +59,20 @@ public struct EStack<T> {
     }
     public T Peek { get => values[Count - 1]; set => values[Count - 1] = value; }
     public List<T> getValues { get => values; }
+}
+
+class FaultyResultException : Exception {
+    public FaultyResultException(object result) {}
+}
+public struct Result<TResult, TError> {
+    private TResult result;
+    private TError error;
+
+    public TResult Unwrap() {
+        if (result is not null) {
+            return result;
+        } else {
+            throw new FaultyResultException(error);
+        }
+    }
 }

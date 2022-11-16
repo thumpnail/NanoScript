@@ -1,9 +1,12 @@
-﻿using BetterConsoleTables;
+﻿using System.Diagnostics;
+using BetterConsoleTables;
 
 public class Program {
-    public static void Main(string[] args) {
+    static Stopwatch sw = new();
+	static bool isDebug = false;
+	public static void Main(string[] args) {
 #if DEBUG
-        StreamReader sr = new StreamReader(@".\..\..\..\simpletest.nano");
+        StreamReader sr = new StreamReader(@"C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano\simpletest.nano");
         List<string> scriptLines = new List<string>();
         string line = "";
         while ((line = sr.ReadLine()) is not null) {
@@ -17,6 +20,11 @@ public class Program {
 
 #elif RELEASE
         if (args.Count() == 0) return;
+        if (args.Contains("-d")) {
+            isDebug = true;
+            sw = Stopwatch.StartNew();
+            Console.WriteLine("Stopwatch Started");
+        }
         StreamReader sr = new StreamReader(args[0].ToString());
         List<string> scriptLines = new List<string>();
         string line = "";
@@ -28,9 +36,9 @@ public class Program {
 
         List<string> words = Lexer.preprocessor(scriptLines.ToArray());
         Dictionary<string, List<Tuple<TokenType,string>>> tokens = Lexer.LexIt(words);
+        
 #elif TEST
         string[] testFiles = { "cll.nano", "let.nano"};
-        List<Tuple<TokenType, string>> tokens = new();
         foreach (var item in testFiles) {
             StreamReader sr = new StreamReader(@".\..\..\..\test\" + item);
             List<string> scriptLines = new List<string>();
@@ -41,11 +49,11 @@ public class Program {
             scriptLines.Add("\n");
             sr.Close();
 
-            List<string> words = Lexer.preprocessor(scriptLines.ToArray());
-            Dictionary<string, List<Tuple<TokenType,string>>> tokens = Lexer.LexIt(words);
+            var words = Lexer.preprocessor(scriptLines.ToArray());
+            var tokens = Lexer.LexIt(words);
 
             Interpreter interpreter = new();
-            interpreter.Execute(tokens);
+            int result = interpreter.SetTokens(tokens).Execute();
             Interpreter.Context.Scope.printScope();
         }
 #endif
@@ -85,10 +93,14 @@ public class Program {
             }
         }
 #endif
-#if RELEASE || DEBUG
+#if RELEASE || DEBUG || TEST
         Interpreter interpreter = new();
         int result = interpreter.SetTokens(tokens).Execute();
         Interpreter.Context.Scope.printScope();
 #endif
+		if (isDebug) {
+			sw.Stop();
+			Console.WriteLine($"Stopwatch Stopped with {sw.ElapsedMilliseconds} ms");
+		}
     }
 }

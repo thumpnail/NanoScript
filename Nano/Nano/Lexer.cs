@@ -151,7 +151,7 @@ public class Lexer {
         ["TRU"] = TokenType.b_TRU
     };
 
-    private static string funcName = "";
+    private static string funcName = "Main";
 
     public static Dictionary<string, List<Tuple<TokenType, string>>> LexIt(List<string> words) {
         Dictionary<string,List<Tuple<TokenType, string>>> final = new() { ["Main"] = new(){ }};
