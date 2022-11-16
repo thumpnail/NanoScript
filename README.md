@@ -15,7 +15,7 @@
  - [x] Calling builtIn functions(cll)
  - [x] Funny Compiler Error Messages
  - [x] Working functions with returns
- - [x] Kinda working If (needs testing but seems stable)
+ - [x] If working (needs testing but seems stable)
  - [ ] Else
  
 ## Dependencies(for debug only)
