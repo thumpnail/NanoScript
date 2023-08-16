@@ -1,3 +1,6 @@
+# Info
+Currently undergoing heavy rewrite
+
 # NanoScript
  Nano Script is a Language Interpreter i am doing for learning purposes.
  It is visualy based on Assambler/Byte Code, so it contains OpCodes but with variable amount of "Parameter".
