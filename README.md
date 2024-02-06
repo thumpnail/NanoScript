@@ -1,5 +1,6 @@
 # Info
 Currently undergoing heavy rewrite
+-> Properly going to write a runtime compiler with scanning on demand
 
 # NanoScript
  Nano Script is a Language Interpreter i am doing for learning purposes.
