@@ -278,6 +278,7 @@
             }
         }
         //Blackmagic shit and i still have no clue what the fuck is going on
+        //FIXME: convert into a stack based expression evaluator
         public static NanoValue Evaluate(Tuple<List<TokenType>, List<string>> list, bool isEditable = false) {
             Hlp.DbgLog(from: "Context.Evaluate", msg: $"in: {Hlp.DUMP(list)}", ConsoleColor.Blue);
             //TODO Add String Workaround

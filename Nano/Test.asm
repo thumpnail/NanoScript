@@ -20,9 +20,6 @@ set arr2[2]
 #jump to line
 jmp main
 :main
-
-
-
 #let
 let a 2
 let arr 12 23 53 63 17 #array
@@ -88,22 +85,22 @@ for item arr5
 ext
 
 #there are no templates just bundled data(struct)
-sct bundled_data
+sct bundled_data:
 	let x 3
 	let y 5
 	let z 6
-	sct inlinesct
+	sct inlinesct:
 		let w
 	ext
 ext
 
 #pck = package
-pck user
+pck user:
 	let name
 	let age
-	fnc ctr
+	fnc ctr:
 		let i 0
-		whl i < 10
+		for i < 10:
 			cll 0x0001
 			cll B01101000
 			#call non builtin function

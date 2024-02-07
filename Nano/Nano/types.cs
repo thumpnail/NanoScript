@@ -62,18 +62,18 @@ public struct NanoValue : NanoType {
 
     //Returns an Object in the Correct Type
     private object FixType(object value) {
-        int i;
-        float f;
-        bool b;
-        if (int.TryParse(value.ToString().Replace('.', ','), out i)) {
+        int _int;
+        float _float;
+        bool _bool;
+        if (int.TryParse(value.ToString().Replace('.', ','), out _int)) {
             type = TokenType.t_int;
-            return i;
-        } else if (float.TryParse(value.ToString().Replace('.', ','), out f)) {
+            return _int;
+        } else if (float.TryParse(value.ToString().Replace('.', ','), out _float)) {
             type = TokenType.t_float;
-            return f;
-        } else if (bool.TryParse(value.ToString().Replace('.', ','), out b)) {
+            return _float;
+        } else if (bool.TryParse(value.ToString().Replace('.', ','), out _bool)) {
             type = TokenType.t_bool;
-            return b;
+            return _bool;
         }
         return value;
     }
