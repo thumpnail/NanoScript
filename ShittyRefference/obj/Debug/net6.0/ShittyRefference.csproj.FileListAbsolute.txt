@@ -10,3 +10,15 @@ C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational F
 C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\refint\ShittyRefference.dll
 C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.pdb
 C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ref\ShittyRefference.dll
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\bin\Debug\net6.0\ShittyRefference.deps.json
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\bin\Debug\net6.0\ShittyRefference.dll
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\bin\Debug\net6.0\ShittyRefference.pdb
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.GeneratedMSBuildEditorConfig.editorconfig
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.AssemblyInfoInputs.cache
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.AssemblyInfo.cs
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.csproj.CoreCompileInputs.cache
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.sourcelink.json
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.dll
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\refint\ShittyRefference.dll
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ShittyRefference.pdb
+D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\ShittyRefference\obj\Debug\net6.0\ref\ShittyRefference.dll

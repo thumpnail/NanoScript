@@ -127,6 +127,7 @@ get bravo >> "text.txt" #rewrite whole file
 set alpha < "test.txt" #reads file 1 line
 set alpha << "test.txt" #reads whole file
 set alpha <14 "test.txt" #reads 14 bytes
+
 cnv alpha ? str #converts alpha to string
 set alpha <<3 "test.txt" #reads 3 lines(until \n)
 let cfg << "cfg.ini" \ "config.cfg"

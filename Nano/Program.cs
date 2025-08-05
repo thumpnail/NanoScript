@@ -6,7 +6,7 @@ public class Program {
 	static bool isDebug = false;
 	public static void Main(string[] args) {
 #if DEBUG
-        StreamReader sr = new StreamReader(@"C:\Users\fried\OneDrive\Dokumente\Code\Visual Studio Projects\Nano Operational Functional Script\Nano\simpletest.nano");
+        StreamReader sr = new StreamReader(@"D:\fried\OneDrive\Dokumente\Code\VisualStudio\Nano Operational Functional Script\Nano\simpletest.nano");
         List<string> scriptLines = new List<string>();
         string line = "";
         while ((line = sr.ReadLine()) is not null) {
